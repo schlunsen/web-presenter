@@ -7,13 +7,24 @@ default:
 
 # Serve locally on port 8000 (or specify PORT=XXXX)
 serve port="8000":
-    @echo "Serving at http://localhost:{{port}}"
-    python3 -m http.server {{port}}
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Kill any existing process on the port
+    lsof -ti :{{port}} 2>/dev/null | xargs kill 2>/dev/null || true
+    sleep 0.5
+    echo "Serving at http://localhost:{{port}}"
+    python3 -m http.server {{port}} --bind 127.0.0.1
 
 # Open in default browser and serve
 open port="8000":
-    @open "http://localhost:{{port}}" 2>/dev/null || xdg-open "http://localhost:{{port}}" 2>/dev/null || echo "Open http://localhost:{{port}} in your browser"
-    python3 -m http.server {{port}}
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Kill any existing process on the port
+    lsof -ti :{{port}} 2>/dev/null | xargs kill 2>/dev/null || true
+    sleep 0.5
+    open "http://localhost:{{port}}" 2>/dev/null || xdg-open "http://localhost:{{port}}" 2>/dev/null || echo "Open http://localhost:{{port}} in your browser"
+    echo "Serving at http://localhost:{{port}}"
+    python3 -m http.server {{port}} --bind 127.0.0.1
 
 # Install dependencies (just python3 check + optional live-reload)
 setup:
@@ -28,8 +39,34 @@ setup:
 
 # Serve with live-reload (requires: npm i -g live-server)
 live port="8000":
-    @which live-server > /dev/null 2>&1 || (echo "Install first: npm install -g live-server" && exit 1)
+    #!/usr/bin/env bash
+    set -euo pipefail
+    which live-server > /dev/null 2>&1 || { echo "Install first: npm install -g live-server"; exit 1; }
+    # Kill any existing process on the port
+    lsof -ti :{{port}} 2>/dev/null | xargs kill 2>/dev/null || true
+    sleep 0.5
+    echo "Live-reloading at http://localhost:{{port}}"
     live-server --port={{port}} --no-browser
+
+# Open the creator (questionnaire)
+create port="8000":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    lsof -ti :{{port}} 2>/dev/null | xargs kill 2>/dev/null || true
+    sleep 0.5
+    open "http://localhost:{{port}}/creator.html" 2>/dev/null || xdg-open "http://localhost:{{port}}/creator.html" 2>/dev/null || echo "Open http://localhost:{{port}}/creator.html"
+    echo "Studio at http://localhost:{{port}}/creator.html"
+    python3 -m http.server {{port}} --bind 127.0.0.1
+
+# Open the editor
+edit port="8000":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    lsof -ti :{{port}} 2>/dev/null | xargs kill 2>/dev/null || true
+    sleep 0.5
+    open "http://localhost:{{port}}/editor.html" 2>/dev/null || xdg-open "http://localhost:{{port}}/editor.html" 2>/dev/null || echo "Open http://localhost:{{port}}/editor.html"
+    echo "Editor at http://localhost:{{port}}/editor.html"
+    python3 -m http.server {{port}} --bind 127.0.0.1
 
 # Deploy to GitHub Pages (push main branch)
 deploy:
@@ -56,7 +93,7 @@ check:
     set -euo pipefail
     echo "Checking assets..."
     errors=0
-    for f in presentation-styles.css presentation-script.js presentation-bg.js three.min.js; do
+    for f in engine/presentation-styles.css engine/presentation-script.js engine/presentation-bg.js engine/three.min.js creator.html editor.html studio/llm-client.js studio/creator.js studio/editor.js; do
         if [ -f "$f" ]; then echo "  $f ✓"; else echo "  $f ✗ MISSING"; errors=$((errors+1)); fi
     done
     echo ""

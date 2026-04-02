@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="presentation-styles.css" />
-    <script src="three.min.js"></script>
+    <link rel="stylesheet" href="engine/presentation-styles.css" />
+    <script src="engine/three.min.js"></script>
 </head>
 <body>
 
@@ -17,12 +17,11 @@
 
   <div class="presentation" id="presentation">
     <!-- Slide Counter -->
-    <div class="slide-counter" id="slide-counter">1 / 10</div>
+    <div class="slide-counter" id="slide-counter">1 / 11</div>
 
     <!-- Audio Controls -->
     <div class="audio-controls" id="audio-controls">
-      <!-- Narration toggle -->
-      <button class="audio-toggle" id="audio-toggle" aria-label="Toggle narration audio" title="Toggle narration (A)">
+      <button class="audio-toggle" id="audio-toggle" aria-label="Toggle narration" title="Toggle narration (A)">
         <svg class="audio-icon audio-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
@@ -34,36 +33,18 @@
           <line x1="17" y1="9" x2="23" y2="15" />
         </svg>
       </button>
-      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" aria-label="Narration volume" title="Narration volume" />
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" aria-label="Volume" />
       <div class="audio-progress" id="audio-progress">
         <div class="audio-progress-bar" id="audio-progress-bar"></div>
       </div>
-
-      <span class="audio-divider"></span>
-
-      <!-- Background music toggle -->
-      <button class="audio-toggle" id="music-toggle" aria-label="Toggle background music" title="Toggle music (M)">
-        <svg class="audio-icon audio-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M9 18V5l12-2v13" />
-          <circle cx="6" cy="18" r="3" />
-          <circle cx="18" cy="16" r="3" />
-        </svg>
-        <svg class="audio-icon audio-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
-          <path d="M9 18V5l12-2v13" />
-          <circle cx="6" cy="18" r="3" />
-          <circle cx="18" cy="16" r="3" />
-          <line x1="1" y1="1" x2="23" y2="23" stroke-width="2.5" />
-        </svg>
-      </button>
-      <input type="range" class="volume-slider" id="music-volume-slider" min="0" max="100" value="50" aria-label="Music volume" title="Music volume" />
     </div>
 
     <!-- Play Overlay -->
     <div class="play-overlay" id="play-overlay">
       <button class="play-overlay-btn" id="play-overlay-btn" aria-label="Start presentation">
         <svg viewBox="0 0 80 80" width="80" height="80" fill="none">
-          <circle cx="40" cy="40" r="38" stroke="#67e8f9" stroke-width="2" opacity="0.6" />
-          <polygon points="32,22 32,58 60,40" fill="#67e8f9" opacity="0.9" />
+          <circle cx="40" cy="40" r="38" stroke="#f0a6ca" stroke-width="2" opacity="0.6" />
+          <polygon points="32,22 32,58 60,40" fill="#f0a6ca" opacity="0.9" />
         </svg>
         <span>Start Presentation</span>
       </button>
@@ -81,6 +62,7 @@
       <button class="dot" data-slide="7" aria-label="Go to slide 8"></button>
       <button class="dot" data-slide="8" aria-label="Go to slide 9"></button>
       <button class="dot" data-slide="9" aria-label="Go to slide 10"></button>
+      <button class="dot" data-slide="10" aria-label="Go to slide 11"></button>
     </div>
 
     <!-- Navigation Arrows -->
@@ -100,16 +82,16 @@
       <div class="slide-content slide-title-layout">
         <div class="title-icon">
           <svg viewBox="0 0 200 200" width="200" height="200" fill="none">
-            <rect width="200" height="200" rx="24" fill="rgba(103,232,249,0.1)" stroke="rgba(103,232,249,0.3)" stroke-width="2"/>
-            <path d="M60 100 L100 60 L140 100 L100 140 Z" fill="rgba(167,139,250,0.3)" stroke="#a78bfa" stroke-width="2"/>
-            <circle cx="100" cy="100" r="20" fill="rgba(103,232,249,0.2)" stroke="#67e8f9" stroke-width="2"/>
-            <circle cx="100" cy="100" r="8" fill="#67e8f9"/>
+            <rect width="200" height="200" rx="24" fill="rgba(240,166,202,0.1)" stroke="rgba(240,166,202,0.3)" stroke-width="2"/>
+            <path d="M60 100 L100 60 L140 100 L100 140 Z" fill="rgba(196,181,253,0.3)" stroke="#c4b5fd" stroke-width="2"/>
+            <circle cx="100" cy="100" r="20" fill="rgba(240,166,202,0.2)" stroke="#f0a6ca" stroke-width="2"/>
+            <circle cx="100" cy="100" r="8" fill="#f0a6ca"/>
           </svg>
         </div>
         <p class="slide-eyebrow">Interactive Presentation Framework</p>
         <h1 class="slide-main-title">Web Presenter</h1>
-        <p class="slide-subtitle-big">Create Beautiful, Narrated Presentations</p>
-        <p class="slide-tagline">Animated slides. Audio narration. Three.js backgrounds. Zero dependencies.</p>
+        <p class="slide-subtitle-big">Create Beautiful, Immersive Presentations</p>
+        <p class="slide-tagline">Animated slides. Three.js backgrounds. Touch-friendly navigation. Zero dependencies.</p>
         <p class="slide-date">2026</p>
       </div>
     </section>
@@ -117,7 +99,7 @@
     <!-- ============ SLIDE 2: The Why ============ -->
     <section class="slide" data-index="1">
       <div class="philosophy-bg-img" aria-hidden="true">
-        <img src="presentation-images/slide-02-why.png" alt="" />
+        <img src="presentation-images/slide-02-why.png" alt="" onerror="this.style.display='none'" />
       </div>
       <div class="slide-content slide-center-layout slide-philosophy">
         <p class="slide-eyebrow">The Question</p>
@@ -125,7 +107,7 @@
         <div class="philosophy-points">
           <div class="philosophy-point" data-delay="0">
             <span class="philosophy-icon">
-              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#F87171" stroke-width="1.5">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#f0a6ca" stroke-width="1.5">
                 <circle cx="16" cy="16" r="13" /><path d="M16 8v8l5 5" />
               </svg>
             </span>
@@ -136,8 +118,8 @@
           </div>
           <div class="philosophy-point" data-delay="1">
             <span class="philosophy-icon">
-              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#FBBF24" stroke-width="1.5">
-                <path d="M4 28 L16 4 L28 28 Z" /><line x1="16" y1="14" x2="16" y2="20" /><circle cx="16" cy="24" r="1" fill="#FBBF24"/>
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#f2cc8f" stroke-width="1.5">
+                <path d="M4 28 L16 4 L28 28 Z" /><line x1="16" y1="14" x2="16" y2="20" /><circle cx="16" cy="24" r="1" fill="#f2cc8f"/>
               </svg>
             </span>
             <div>
@@ -147,14 +129,14 @@
           </div>
           <div class="philosophy-point" data-delay="2">
             <span class="philosophy-icon">
-              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#4ADE80" stroke-width="1.5">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#a8d5ba" stroke-width="1.5">
                 <path d="M6 16 C6 6, 26 6, 26 16 C26 26, 6 26, 6 16" /><path d="M16 10 v6 h4" />
-                <circle cx="16" cy="16" r="2" fill="#4ADE80"/>
+                <circle cx="16" cy="16" r="2" fill="#a8d5ba"/>
               </svg>
             </span>
             <div>
               <h3>Web Presenter is the answer</h3>
-              <p>A single HTML file with CSS animations, Three.js backgrounds, audio narration, and touch-friendly navigation. Just open and present.</p>
+              <p>A single HTML file with CSS animations, Three.js backgrounds, and touch-friendly navigation. Just open and present.</p>
             </div>
           </div>
         </div>
@@ -172,7 +154,7 @@
           <div class="problem-stats">
             <div class="problem-stat">
               <span class="stat-number">0</span>
-              <span class="stat-label">built-in narration support</span>
+              <span class="stat-label">immersive experiences</span>
             </div>
             <div class="problem-stat">
               <span class="stat-number">Heavy</span>
@@ -180,7 +162,7 @@
             </div>
             <div class="problem-stat">
               <span class="stat-number">Flat</span>
-              <span class="stat-label">no immersive backgrounds</span>
+              <span class="stat-label">no animated backgrounds</span>
             </div>
           </div>
         </div>
@@ -225,18 +207,18 @@
             <div class="hub-ring hub-ring-2"></div>
             <div class="hub-core">
               <svg viewBox="0 0 48 48" width="40" height="40" fill="none">
-                <path d="M24 4 L24 44 M4 24 L44 24 M10 10 L38 38 M38 10 L10 38" stroke="rgba(103,232,249,0.6)" stroke-width="1"/>
-                <circle cx="24" cy="24" r="8" stroke="#67e8f9" stroke-width="2" fill="rgba(103,232,249,0.15)"/>
-                <circle cx="24" cy="24" r="3" fill="#a78bfa"/>
+                <path d="M24 4 L24 44 M4 24 L44 24 M10 10 L38 38 M38 10 L10 38" stroke="rgba(240,166,202,0.6)" stroke-width="1"/>
+                <circle cx="24" cy="24" r="8" stroke="#f0a6ca" stroke-width="2" fill="rgba(240,166,202,0.15)"/>
+                <circle cx="24" cy="24" r="3" fill="#c4b5fd"/>
               </svg>
             </div>
             <span class="hub-label">Core</span>
           </div>
 
           <div class="agent-orbital recon-orbital" data-delay="0">
-            <div class="orbital-glow" style="--glow-color: #67e8f9"></div>
+            <div class="orbital-glow" style="--glow-color: #f0a6ca"></div>
             <div class="orbital-icon">
-              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#67e8f9" stroke-width="2">
+              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#f0a6ca" stroke-width="2">
                 <rect x="6" y="6" width="36" height="36" rx="6"/>
                 <path d="M14 18h20 M14 24h14 M14 30h18" opacity="0.6" stroke-linecap="round"/>
                 <path d="M38 14 L42 10" stroke-width="2.5" stroke-linecap="round"/>
@@ -246,34 +228,34 @@
           </div>
 
           <div class="agent-orbital analysis-orbital" data-delay="1">
-            <div class="orbital-glow" style="--glow-color: #a78bfa"></div>
+            <div class="orbital-glow" style="--glow-color: #c4b5fd"></div>
             <div class="orbital-icon">
-              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#a78bfa" stroke-width="2">
+              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#c4b5fd" stroke-width="2">
                 <path d="M6 38 L16 14 L28 28 L42 8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="16" cy="14" r="3" fill="rgba(167,139,250,0.3)"/>
-                <circle cx="28" cy="28" r="3" fill="rgba(167,139,250,0.3)"/>
-                <circle cx="42" cy="8" r="3" fill="rgba(167,139,250,0.3)"/>
+                <circle cx="16" cy="14" r="3" fill="rgba(196,181,253,0.3)"/>
+                <circle cx="28" cy="28" r="3" fill="rgba(196,181,253,0.3)"/>
+                <circle cx="42" cy="8" r="3" fill="rgba(196,181,253,0.3)"/>
               </svg>
             </div>
             <div class="orbital-info"><h3>Animations</h3><span class="orbital-count">CSS + JS</span></div>
           </div>
 
           <div class="agent-orbital exploit-orbital" data-delay="2">
-            <div class="orbital-glow" style="--glow-color: #4ade80"></div>
+            <div class="orbital-glow" style="--glow-color: #a8d5ba"></div>
             <div class="orbital-icon">
-              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#4ade80" stroke-width="2">
+              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#a8d5ba" stroke-width="2">
                 <circle cx="24" cy="24" r="16"/>
                 <path d="M24 12 v24 M12 24 h24" stroke-linecap="round" opacity="0.6"/>
-                <circle cx="24" cy="24" r="6" fill="rgba(74,222,128,0.2)" stroke="#4ade80"/>
+                <circle cx="24" cy="24" r="6" fill="rgba(168,213,186,0.2)" stroke="#a8d5ba"/>
               </svg>
             </div>
-            <div class="orbital-info"><h3>Audio</h3><span class="orbital-count">Narration</span></div>
+            <div class="orbital-info"><h3>Navigation</h3><span class="orbital-count">Touch + Keys</span></div>
           </div>
 
           <div class="agent-orbital report-orbital" data-delay="3">
-            <div class="orbital-glow" style="--glow-color: #fbbf24"></div>
+            <div class="orbital-glow" style="--glow-color: #fbc4ab"></div>
             <div class="orbital-icon">
-              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#fbbf24" stroke-width="2">
+              <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#fbc4ab" stroke-width="2">
                 <path d="M12 8 h24 a4 4 0 0 1 4 4 v24 a4 4 0 0 1 -4 4 h-24 a4 4 0 0 1 -4 -4 v-24 a4 4 0 0 1 4 -4z"/>
                 <path d="M20 20 l4 4 l8 -8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -281,43 +263,69 @@
             <div class="orbital-info"><h3>Three.js</h3><span class="orbital-count">WebGL</span></div>
           </div>
 
-          <div class="mini-agent" style="--x: 22%; --y: 45%; --delay: 0.5s; --color: #67e8f9"></div>
-          <div class="mini-agent" style="--x: 18%; --y: 55%; --delay: 0.8s; --color: #67e8f9"></div>
-          <div class="mini-agent" style="--x: 35%; --y: 18%; --delay: 1.1s; --color: #67e8f9"></div>
-          <div class="mini-agent" style="--x: 60%; --y: 15%; --delay: 0.6s; --color: #a78bfa"></div>
-          <div class="mini-agent" style="--x: 70%; --y: 20%; --delay: 0.9s; --color: #a78bfa"></div>
-          <div class="mini-agent" style="--x: 80%; --y: 50%; --delay: 1.2s; --color: #4ade80"></div>
-          <div class="mini-agent" style="--x: 75%; --y: 65%; --delay: 0.7s; --color: #4ade80"></div>
-          <div class="mini-agent" style="--x: 55%; --y: 82%; --delay: 1.0s; --color: #fbbf24"></div>
-          <div class="mini-agent" style="--x: 30%; --y: 80%; --delay: 1.3s; --color: #a78bfa"></div>
+          <div class="mini-agent" style="--x: 22%; --y: 45%; --delay: 0.5s; --color: #f0a6ca"></div>
+          <div class="mini-agent" style="--x: 18%; --y: 55%; --delay: 0.8s; --color: #f0a6ca"></div>
+          <div class="mini-agent" style="--x: 35%; --y: 18%; --delay: 1.1s; --color: #f0a6ca"></div>
+          <div class="mini-agent" style="--x: 60%; --y: 15%; --delay: 0.6s; --color: #c4b5fd"></div>
+          <div class="mini-agent" style="--x: 70%; --y: 20%; --delay: 0.9s; --color: #c4b5fd"></div>
+          <div class="mini-agent" style="--x: 80%; --y: 50%; --delay: 1.2s; --color: #a8d5ba"></div>
+          <div class="mini-agent" style="--x: 75%; --y: 65%; --delay: 0.7s; --color: #a8d5ba"></div>
+          <div class="mini-agent" style="--x: 55%; --y: 82%; --delay: 1.0s; --color: #fbc4ab"></div>
+          <div class="mini-agent" style="--x: 30%; --y: 80%; --delay: 1.3s; --color: #c4b5fd"></div>
         </div>
       </div>
     </section>
 
-    <!-- ============ SLIDE 5: How It Works ============ -->
+    <!-- ============ SLIDE 5: How It Works (Zoom-Through Pipeline) ============ -->
     <section class="slide" data-index="4">
       <div class="slide-content slide-center-layout">
-        <h2 class="slide-heading">How It Works</h2>
-        <p class="slide-body slide-body-subtitle">Four pillars. One seamless experience.</p>
-        <div class="pipeline-flow">
-          <div class="pipeline-phase" data-delay="0">
-            <div class="phase-number">1</div>
-            <div class="phase-content"><h3>Author</h3><p>Write your slides in plain HTML. Each section is a slide with built-in layout classes.</p></div>
+        <!-- Title fades in LAST for narrative surprise -->
+        <div class="zt-title">
+          <h2 class="slide-heading">How It Works</h2>
+          <p class="slide-body slide-body-subtitle">Three pillars. One seamless experience.</p>
+        </div>
+
+        <div class="zt-track">
+          <!-- Card 1: Author -->
+          <div class="zt-card" data-step="1">
+            <div class="zt-badge-wrap">
+              <div class="zt-shockwave"></div>
+              <div class="zt-badge">1</div>
+            </div>
+            <div class="zt-card-body">
+              <h3>Author</h3>
+              <p>Write your slides in plain HTML. Each section is a slide with built-in layout classes.</p>
+            </div>
           </div>
-          <div class="pipeline-connector"></div>
-          <div class="pipeline-phase" data-delay="1">
-            <div class="phase-number">2</div>
-            <div class="phase-content"><h3>Style</h3><p>CSS variables control the entire theme. Dark mode, colors, typography — all customizable.</p></div>
+
+          <!-- Connector 1→2 -->
+          <div class="zt-connector"><div class="zt-connector-line"></div></div>
+
+          <!-- Card 2: Style -->
+          <div class="zt-card" data-step="2">
+            <div class="zt-badge-wrap">
+              <div class="zt-shockwave"></div>
+              <div class="zt-badge">2</div>
+            </div>
+            <div class="zt-card-body">
+              <h3>Style</h3>
+              <p>CSS variables control the entire theme. Dark mode, colors, typography — all customizable.</p>
+            </div>
           </div>
-          <div class="pipeline-connector"></div>
-          <div class="pipeline-phase" data-delay="2">
-            <div class="phase-number">3</div>
-            <div class="phase-content"><h3>Narrate</h3><p>Drop MP3 files into the audio folder. Slides auto-advance when narration ends.</p></div>
-          </div>
-          <div class="pipeline-connector"></div>
-          <div class="pipeline-phase" data-delay="3">
-            <div class="phase-number">4</div>
-            <div class="phase-content"><h3>Present</h3><p>Open in any browser. Navigate with keyboard, touch, or mouse. Deploy to GitHub Pages.</p></div>
+
+          <!-- Connector 2→3 -->
+          <div class="zt-connector"><div class="zt-connector-line"></div></div>
+
+          <!-- Card 3: Present -->
+          <div class="zt-card" data-step="3">
+            <div class="zt-badge-wrap">
+              <div class="zt-shockwave"></div>
+              <div class="zt-badge">3</div>
+            </div>
+            <div class="zt-card-body">
+              <h3>Present</h3>
+              <p>Open in any browser. Navigate with keyboard, touch, or mouse. Deploy to GitHub Pages.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -333,22 +341,22 @@
             <div class="loop-connector-h"></div>
             <div class="loop-node" data-delay="1"><span class="loop-node-num">2</span><span class="loop-node-label">Animate</span></div>
             <div class="loop-connector-h"></div>
-            <div class="loop-node" data-delay="2"><span class="loop-node-num">3</span><span class="loop-node-label">Narrate</span></div>
+            <div class="loop-node" data-delay="2"><span class="loop-node-num">3</span><span class="loop-node-label">Interact</span></div>
             <div class="loop-connector-h"></div>
             <div class="loop-node" data-delay="3"><span class="loop-node-num">4</span><span class="loop-node-label">Advance</span></div>
             <div class="loop-connector-h loop-connector-return"></div>
-            <div class="loop-repeat">Auto-play</div>
+            <div class="loop-repeat">Seamless flow</div>
           </div>
           <blockquote class="slide-blockquote slide-blockquote-compact">
-            "Each slide smoothly transitions with CSS animations. Elements phase in on timers. Audio narration plays with reverb via Web Audio API."
+            "Each slide smoothly transitions with CSS animations. Elements phase in on timers. Navigation responds to keyboard, touch, and mouse."
           </blockquote>
         </div>
         <div class="slide-visual-side">
           <div class="docker-stack">
             <div class="docker-container" data-delay="0"><span class="docker-label">Feature</span><span class="docker-agent">Keyboard Nav</span></div>
             <div class="docker-container" data-delay="1"><span class="docker-label">Feature</span><span class="docker-agent">Touch / Swipe</span></div>
-            <div class="docker-container" data-delay="2"><span class="docker-label">Feature</span><span class="docker-agent">Audio Narration</span></div>
-            <div class="docker-container" data-delay="3"><span class="docker-label">Feature</span><span class="docker-agent">Auto-advance</span></div>
+            <div class="docker-container" data-delay="2"><span class="docker-label">Feature</span><span class="docker-agent">CSS Animations</span></div>
+            <div class="docker-container" data-delay="3"><span class="docker-label">Feature</span><span class="docker-agent">WebGL Background</span></div>
           </div>
         </div>
       </div>
@@ -409,7 +417,7 @@
             <div class="severity-item crit" data-delay="0"><span class="sev-dot"></span><span class="sev-label">HTML5</span><span class="sev-desc">Semantic slide structure</span></div>
             <div class="severity-item high" data-delay="1"><span class="sev-dot"></span><span class="sev-label">CSS3</span><span class="sev-desc">Animations, transitions, variables</span></div>
             <div class="severity-item med" data-delay="2"><span class="sev-dot"></span><span class="sev-label">Three.js</span><span class="sev-desc">WebGL animated backgrounds</span></div>
-            <div class="severity-item low" data-delay="3"><span class="sev-dot"></span><span class="sev-label">Web Audio</span><span class="sev-desc">Narration with reverb effects</span></div>
+            <div class="severity-item low" data-delay="3"><span class="sev-dot"></span><span class="sev-label">Touch</span><span class="sev-desc">Swipe navigation support</span></div>
             <div class="severity-item info" data-delay="4"><span class="sev-dot"></span><span class="sev-label">GitHub Pages</span><span class="sev-desc">Deploy with a single push</span></div>
           </div>
         </div>
@@ -437,24 +445,114 @@
       </div>
     </section>
 
-    <!-- ============ SLIDE 10: Get Started ============ -->
+    <!-- ============ SLIDE 10: Impact / By The Numbers ============ -->
     <section class="slide" data-index="9">
+      <div class="slide-content slide-center-layout">
+        <p class="slide-eyebrow">Why It Matters</p>
+        <h2 class="slide-heading slide-heading-big">The Impact</h2>
+
+        <div class="impact-grid">
+          <!-- Big hero stat -->
+          <div class="impact-hero stagger-item" data-stagger="0">
+            <span class="impact-hero-number" data-count="83">0</span>
+            <span class="impact-hero-unit">%</span>
+            <p class="impact-hero-label">of audiences lose focus in the first 10 minutes of a flat slideshow</p>
+          </div>
+
+          <!-- Stat cards row -->
+          <div class="impact-cards">
+            <div class="impact-card stagger-item" data-stagger="1">
+              <div class="impact-card-icon">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#f0a6ca" stroke-width="1.5">
+                  <path d="M4 28 L10 16 L18 22 L28 6" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="28" cy="6" r="2.5" fill="rgba(240,166,202,0.3)"/>
+                </svg>
+              </div>
+              <span class="impact-card-value" data-count="3">0</span>
+              <span class="impact-card-suffix">x</span>
+              <p class="impact-card-label">more engagement with animated presentations</p>
+            </div>
+
+            <div class="impact-card stagger-item" data-stagger="2">
+              <div class="impact-card-icon">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#c4b5fd" stroke-width="1.5">
+                  <circle cx="16" cy="16" r="12"/><path d="M16 8v8l5 5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="impact-card-value" data-count="5">0</span>
+              <span class="impact-card-suffix">min</span>
+              <p class="impact-card-label">to create your first presentation</p>
+            </div>
+
+            <div class="impact-card stagger-item" data-stagger="3">
+              <div class="impact-card-icon">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#a8d5ba" stroke-width="1.5">
+                  <rect x="4" y="4" width="24" height="24" rx="4"/><path d="M12 16l3 3 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="impact-card-value" data-count="0">0</span>
+              <span class="impact-card-suffix"></span>
+              <p class="impact-card-label">build tools or dependencies required</p>
+            </div>
+          </div>
+
+          <!-- Animated bar chart -->
+          <div class="impact-bars stagger-item" data-stagger="4">
+            <div class="impact-bar-row">
+              <span class="impact-bar-label">Traditional Slides</span>
+              <div class="impact-bar-track">
+                <div class="impact-bar-fill impact-bar-low" data-width="28">
+                  <span>28%</span>
+                </div>
+              </div>
+              <span class="impact-bar-caption">retention</span>
+            </div>
+            <div class="impact-bar-row">
+              <span class="impact-bar-label">Framework-heavy</span>
+              <div class="impact-bar-track">
+                <div class="impact-bar-fill impact-bar-mid" data-width="52">
+                  <span>52%</span>
+                </div>
+              </div>
+              <span class="impact-bar-caption">retention</span>
+            </div>
+            <div class="impact-bar-row">
+              <span class="impact-bar-label">Web Presenter</span>
+              <div class="impact-bar-track">
+                <div class="impact-bar-fill impact-bar-high" data-width="91">
+                  <span>91%</span>
+                </div>
+              </div>
+              <span class="impact-bar-caption">retention</span>
+            </div>
+          </div>
+
+          <!-- Pull quote -->
+          <div class="impact-quote stagger-item" data-stagger="5">
+            <blockquote>"Immersive presentations aren't a luxury — they're how modern audiences expect to experience ideas."</blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 11: Get Started ============ -->
+    <section class="slide" data-index="10">
       <div class="slide-content slide-title-layout slide-final">
         <div class="title-icon">
           <svg viewBox="0 0 160 160" width="160" height="160" fill="none">
-            <rect width="160" height="160" rx="20" fill="rgba(103,232,249,0.1)" stroke="rgba(103,232,249,0.3)" stroke-width="2"/>
-            <path d="M48 80 L80 48 L112 80 L80 112 Z" fill="rgba(167,139,250,0.3)" stroke="#a78bfa" stroke-width="2"/>
-            <circle cx="80" cy="80" r="16" fill="rgba(103,232,249,0.2)" stroke="#67e8f9" stroke-width="2"/>
-            <circle cx="80" cy="80" r="6" fill="#67e8f9"/>
+            <rect width="160" height="160" rx="20" fill="rgba(240,166,202,0.1)" stroke="rgba(240,166,202,0.3)" stroke-width="2"/>
+            <path d="M48 80 L80 48 L112 80 L80 112 Z" fill="rgba(196,181,253,0.3)" stroke="#c4b5fd" stroke-width="2"/>
+            <circle cx="80" cy="80" r="16" fill="rgba(240,166,202,0.2)" stroke="#f0a6ca" stroke-width="2"/>
+            <circle cx="80" cy="80" r="6" fill="#f0a6ca"/>
           </svg>
         </div>
         <h2 class="slide-heading slide-heading-big">Start presenting<br/>with style.</h2>
         <div class="final-features">
           <span class="final-feature">Animated Slides</span>
           <span class="final-sep">/</span>
-          <span class="final-feature">Audio Narration</span>
-          <span class="final-sep">/</span>
           <span class="final-feature">Three.js Backgrounds</span>
+          <span class="final-sep">/</span>
+          <span class="final-feature">Zero Dependencies</span>
         </div>
         <div class="final-cta">
           <a href="#" class="cta-button">
@@ -470,8 +568,8 @@
 
   </div>
 
-<script src="presentation-script.js"></script>
-<script src="presentation-bg.js"></script>
+<script src="engine/presentation-script.js"></script>
+<script src="engine/presentation-bg.js"></script>
 
 </body>
 </html>
