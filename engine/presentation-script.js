@@ -164,7 +164,7 @@ triggerSlideAnimations(0);
 var audioToggle = document.getElementById('audio-toggle');
 var volumeSlider = document.getElementById('volume-slider');
 var audioProgressBar = document.getElementById('audio-progress-bar');
-var audioEnabled = true, audioVolume = 0.8, currentAudio = null, audioProgressInterval = null;
+var audioEnabled = true, audioVolume = 0.6, currentAudio = null, audioProgressInterval = null;
 var slideAudioCache = {};
 var activeFadeIntervals = [];  // track all fade intervals so we can kill them
 var pendingTimer = null;
