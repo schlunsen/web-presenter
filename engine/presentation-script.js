@@ -418,183 +418,303 @@ function connectAudioToAnalyser(audio) {
 var blinkTimer = null;
 var pupilTimer = null;
 var browTimer = null;
+var squintTimer = null;
+
+// Viseme shapes: each defines lip paths, mouth hole, jaw, tongue, teeth, cheeks
+// Shapes are interpolated for smooth transitions
+var VISEMES = {
+  // 0: closed / rest
+  rest:       { holeRx: 1, holeRy: 0.5, holeCy: 76, jawDy: 0, upperLip: 'M52,76 Q56,75.5 60,75.5 Q64,75.5 68,76', lowerLip: 'M52,76 Q56,76.5 60,76.5 Q64,76.5 68,76', tongueRy: 0, tongueCy: 80, teethUpperH: 0, teethLowerH: 0, cheekScale: 1 },
+  // 1: slight open "uh/schwa"
+  uh:         { holeRx: 7, holeRy: 4, holeCy: 77, jawDy: 2, upperLip: 'M51,75 Q56,73 60,73 Q64,73 69,75', lowerLip: 'M51,79 Q56,81 60,81 Q64,81 69,79', tongueRy: 1, tongueCy: 80, teethUpperH: 1.5, teethLowerH: 0, cheekScale: 1 },
+  // 2: "ah" wide open
+  ah:         { holeRx: 9, holeRy: 7, holeCy: 78, jawDy: 5, upperLip: 'M49,75 Q55,72 60,71.5 Q65,72 71,75', lowerLip: 'M49,81 Q55,86 60,87 Q65,86 71,81', tongueRy: 3, tongueCy: 83, teethUpperH: 2.5, teethLowerH: 1.5, cheekScale: 0.9 },
+  // 3: "ee" wide grin
+  ee:         { holeRx: 11, holeRy: 2.5, holeCy: 76, jawDy: 1, upperLip: 'M48,76 Q54,74 60,73.5 Q66,74 72,76', lowerLip: 'M48,76 Q54,78 60,78.5 Q66,78 72,76', tongueRy: 0, tongueCy: 78, teethUpperH: 2, teethLowerH: 1, cheekScale: 1.15 },
+  // 4: "oo" small round
+  oo:         { holeRx: 4, holeRy: 5, holeCy: 77, jawDy: 3, upperLip: 'M54,75 Q57,73 60,72.5 Q63,73 66,75', lowerLip: 'M54,79 Q57,82 60,83 Q63,82 66,79', tongueRy: 1.5, tongueCy: 81, teethUpperH: 0, teethLowerH: 0, cheekScale: 0.85 },
+  // 5: "F/V" - teeth on lower lip
+  fv:         { holeRx: 8, holeRy: 1.5, holeCy: 76, jawDy: 0.5, upperLip: 'M50,76 Q55,75 60,75 Q65,75 70,76', lowerLip: 'M50,76 Q55,76.5 60,76.8 Q65,76.5 70,76', tongueRy: 0, tongueCy: 78, teethUpperH: 3.5, teethLowerH: 0, cheekScale: 1 },
+  // 6: "M/B/P" - lips pressed
+  mbp:        { holeRx: 7, holeRy: 0.3, holeCy: 76, jawDy: 0, upperLip: 'M50,76 Q55,75.8 60,75.8 Q65,75.8 70,76', lowerLip: 'M50,76 Q55,76.2 60,76.2 Q65,76.2 70,76', tongueRy: 0, tongueCy: 78, teethUpperH: 0, teethLowerH: 0, cheekScale: 1.1 },
+  // 7: "TH/L" - tongue tip visible
+  th:         { holeRx: 8, holeRy: 3, holeCy: 76.5, jawDy: 1.5, upperLip: 'M50,75 Q55,73.5 60,73 Q65,73.5 70,75', lowerLip: 'M50,78 Q55,79.5 60,80 Q65,79.5 70,78', tongueRy: 3.5, tongueCy: 77, teethUpperH: 2, teethLowerH: 0, cheekScale: 1 },
+  // 8: "W/R" - pursed
+  wr:         { holeRx: 5, holeRy: 3.5, holeCy: 77, jawDy: 2, upperLip: 'M53,76 Q56,74 60,73.5 Q64,74 67,76', lowerLip: 'M53,78 Q56,80 60,81 Q64,80 67,78', tongueRy: 0.5, tongueCy: 79, teethUpperH: 0, teethLowerH: 0, cheekScale: 0.9 },
+  // 9: asymmetric smirk (funny!)
+  smirk:      { holeRx: 8, holeRy: 2.5, holeCy: 76, jawDy: 1, upperLip: 'M50,77 Q55,74 60,73 Q65,74 70,74', lowerLip: 'M50,77 Q55,79 60,78.5 Q65,78 70,77', tongueRy: 0, tongueCy: 78, teethUpperH: 1.5, teethLowerH: 0, cheekScale: 1.05 },
+};
+
+var VISEME_KEYS = Object.keys(VISEMES);
 
 function startMouthAnimation(slideIndex) {
   stopMouthAnimation();
   var who = getPresenter(slideIndex);
   var svgEl = who === 'a' ? presenterA : presenterB;
-  var mouth = svgEl.querySelector('.presenter-mouth');
-  var tongue = svgEl.querySelector('.presenter-tongue');
-  var teeth = svgEl.querySelector('.presenter-teeth');
-  var head = svgEl.querySelector('.presenter-head');
-  var browL = svgEl.querySelector('.presenter-brow-l');
-  var browR = svgEl.querySelector('.presenter-brow-r');
-  var pupilL = svgEl.querySelector('.presenter-pupil-l');
-  var pupilR = svgEl.querySelector('.presenter-pupil-r');
-  var glintL = svgEl.querySelector('.presenter-glint-l');
-  var glintR = svgEl.querySelector('.presenter-glint-r');
-  var lidL = svgEl.querySelector('.presenter-lid-l');
-  var lidR = svgEl.querySelector('.presenter-lid-r');
-  if (!mouth) return;
+  var els = {
+    mouthHole: svgEl.querySelector('.presenter-mouth-hole'),
+    lipUpper: svgEl.querySelector('.presenter-lip-upper'),
+    lipLower: svgEl.querySelector('.presenter-lip-lower'),
+    tongue: svgEl.querySelector('.presenter-tongue'),
+    teethUpper: svgEl.querySelector('.presenter-teeth-upper'),
+    teethLower: svgEl.querySelector('.presenter-teeth-lower'),
+    jaw: svgEl.querySelector('.presenter-jaw'),
+    cheekL: svgEl.querySelector('.presenter-cheek-l'),
+    cheekR: svgEl.querySelector('.presenter-cheek-r'),
+    head: svgEl.querySelector('.presenter-head'),
+    browL: svgEl.querySelector('.presenter-brow-l'),
+    browR: svgEl.querySelector('.presenter-brow-r'),
+    pupilL: svgEl.querySelector('.presenter-pupil-l'),
+    pupilR: svgEl.querySelector('.presenter-pupil-r'),
+    glintL: svgEl.querySelector('.presenter-glint-l'),
+    glintR: svgEl.querySelector('.presenter-glint-r'),
+    lidL: svgEl.querySelector('.presenter-lid-l'),
+    lidR: svgEl.querySelector('.presenter-lid-r'),
+  };
+  if (!els.mouthHole) return;
 
   presenterBubble.classList.add('speaking');
 
-  // Mouth shape history for variety
-  var prevLevel = 0;
-  var smoothLevel = 0;
+  var smoothLevel = 0, smoothLow = 0, smoothMid = 0, smoothHigh = 0;
   var frameCount = 0;
-  var currentMouthShape = 0; // 0=closed, 1=open, 2=wide, 3=O-shape
-  var shapeHoldFrames = 0;
+  var currentViseme = 'rest';
+  var targetViseme = 'rest';
+  var visemeBlend = 1; // 0=current, 1=target (start fully at target)
+  var visemeHoldFrames = 0;
+  var silenceFrames = 0;
+  var prevWasSilent = true;
 
-  // Random blink every 2-5 seconds
+  // Blinks: random 2-5s, occasional double-blink
   function scheduleBlink() {
     blinkTimer = setTimeout(function() {
       if (!mouthAnimFrame) return;
-      // Blink animation: close lids then open
-      lidL.setAttribute('ry', '12'); lidR.setAttribute('ry', '12');
-      lidL.setAttribute('cy', '58'); lidR.setAttribute('cy', '58');
-      setTimeout(function() {
-        lidL.setAttribute('ry', '0'); lidR.setAttribute('ry', '0');
-        lidL.setAttribute('cy', '48'); lidR.setAttribute('cy', '48');
-        scheduleBlink();
-      }, 120);
-    }, 2000 + Math.random() * 3000);
+      function doBlink() {
+        els.lidL.setAttribute('ry', '12'); els.lidR.setAttribute('ry', '12');
+        els.lidL.setAttribute('cy', '56'); els.lidR.setAttribute('cy', '56');
+        setTimeout(function() {
+          els.lidL.setAttribute('ry', '0'); els.lidR.setAttribute('ry', '0');
+          els.lidL.setAttribute('cy', '46'); els.lidR.setAttribute('cy', '46');
+        }, 100 + Math.random() * 60);
+      }
+      doBlink();
+      // 20% chance of double-blink
+      if (Math.random() < 0.2) { setTimeout(doBlink, 250); }
+      scheduleBlink();
+    }, 1800 + Math.random() * 3500);
   }
   scheduleBlink();
 
-  // Random pupil drift every 1-3 seconds
+  // Pupils: drift, sometimes look at "audience" (down-center)
   function schedulePupilMove() {
     pupilTimer = setTimeout(function() {
       if (!mouthAnimFrame) return;
-      var dx = (Math.random() - 0.5) * 4;
-      var dy = (Math.random() - 0.5) * 2;
-      pupilL.setAttribute('cx', (49 + dx).toFixed(1));
-      pupilR.setAttribute('cx', (75 + dx).toFixed(1));
-      pupilL.setAttribute('cy', (59 + dy).toFixed(1));
-      pupilR.setAttribute('cy', (59 + dy).toFixed(1));
-      glintL.setAttribute('cx', (50 + dx).toFixed(1));
-      glintR.setAttribute('cx', (76 + dx).toFixed(1));
-      glintL.setAttribute('cy', (57 + dy).toFixed(1));
-      glintR.setAttribute('cy', (57 + dy).toFixed(1));
-      // Return to center after a bit
+      var dx, dy;
+      if (Math.random() < 0.25) {
+        // Look down at audience
+        dx = (Math.random() - 0.5) * 2; dy = 2.5 + Math.random();
+      } else if (Math.random() < 0.15) {
+        // Look up (thinking)
+        dx = (Math.random() - 0.5) * 2; dy = -2.5;
+      } else {
+        dx = (Math.random() - 0.5) * 5; dy = (Math.random() - 0.5) * 3;
+      }
+      els.pupilL.setAttribute('cx', (49 + dx).toFixed(1));
+      els.pupilR.setAttribute('cx', (75 + dx).toFixed(1));
+      els.pupilL.setAttribute('cy', (57 + dy).toFixed(1));
+      els.pupilR.setAttribute('cy', (57 + dy).toFixed(1));
+      els.glintL.setAttribute('cx', (50.5 + dx).toFixed(1));
+      els.glintR.setAttribute('cx', (76.5 + dx).toFixed(1));
+      els.glintL.setAttribute('cy', (55 + dy).toFixed(1));
+      els.glintR.setAttribute('cy', (55 + dy).toFixed(1));
       setTimeout(function() {
-        pupilL.setAttribute('cx', '49'); pupilR.setAttribute('cx', '75');
-        pupilL.setAttribute('cy', '59'); pupilR.setAttribute('cy', '59');
-        glintL.setAttribute('cx', '50'); glintR.setAttribute('cx', '76');
-        glintL.setAttribute('cy', '57'); glintR.setAttribute('cy', '57');
-      }, 600 + Math.random() * 400);
+        els.pupilL.setAttribute('cx', '49'); els.pupilR.setAttribute('cx', '75');
+        els.pupilL.setAttribute('cy', '57'); els.pupilR.setAttribute('cy', '57');
+        els.glintL.setAttribute('cx', '50.5'); els.glintR.setAttribute('cx', '76.5');
+        els.glintL.setAttribute('cy', '55'); els.glintR.setAttribute('cy', '55');
+      }, 500 + Math.random() * 600);
       schedulePupilMove();
-    }, 1500 + Math.random() * 2000);
+    }, 1200 + Math.random() * 2500);
   }
   schedulePupilMove();
 
-  // Random eyebrow raises on louder parts
+  // Eyebrows: raise on emphasis, occasional asymmetric quirk
   function scheduleBrowRaise() {
     browTimer = setTimeout(function() {
       if (!mouthAnimFrame) return;
-      if (smoothLevel > 0.4) {
-        // Raise eyebrows
-        browL.setAttribute('y1', '43'); browL.setAttribute('y2', '42');
-        browR.setAttribute('y1', '42'); browR.setAttribute('y2', '43');
+      if (smoothLevel > 0.35) {
+        if (Math.random() < 0.3) {
+          // Asymmetric — one brow up (funny/skeptical)
+          els.browL.setAttribute('y1', '42'); els.browL.setAttribute('y2', '41');
+          // right stays or goes down
+          els.browR.setAttribute('y1', '46'); els.browR.setAttribute('y2', '47');
+        } else {
+          els.browL.setAttribute('y1', '43'); els.browL.setAttribute('y2', '42');
+          els.browR.setAttribute('y1', '42'); els.browR.setAttribute('y2', '43');
+        }
         setTimeout(function() {
-          browL.setAttribute('y1', '46'); browL.setAttribute('y2', '45');
-          browR.setAttribute('y1', '45'); browR.setAttribute('y2', '46');
-        }, 400 + Math.random() * 300);
+          els.browL.setAttribute('y1', '46'); els.browL.setAttribute('y2', '45');
+          els.browR.setAttribute('y1', '45'); els.browR.setAttribute('y2', '46');
+        }, 350 + Math.random() * 400);
       }
       scheduleBrowRaise();
-    }, 800 + Math.random() * 1500);
+    }, 600 + Math.random() * 1800);
   }
   scheduleBrowRaise();
+
+  // Occasional squint when concentrating
+  function scheduleSquint() {
+    squintTimer = setTimeout(function() {
+      if (!mouthAnimFrame) return;
+      if (smoothLevel > 0.2 && Math.random() < 0.3) {
+        els.lidL.setAttribute('ry', '4'); els.lidR.setAttribute('ry', '4');
+        els.lidL.setAttribute('cy', '52'); els.lidR.setAttribute('cy', '52');
+        setTimeout(function() {
+          els.lidL.setAttribute('ry', '0'); els.lidR.setAttribute('ry', '0');
+          els.lidL.setAttribute('cy', '46'); els.lidR.setAttribute('cy', '46');
+        }, 300 + Math.random() * 300);
+      }
+      scheduleSquint();
+    }, 3000 + Math.random() * 4000);
+  }
+  scheduleSquint();
+
+  // Pick viseme based on audio analysis
+  function pickViseme(level, low, mid, high) {
+    if (level < 0.06) return 'rest';
+    if (level < 0.12) return 'mbp'; // barely speaking, lips together
+
+    var ratio_hl = high / (low + 1);
+    var ratio_lm = low / (mid + 1);
+    var r = Math.random();
+
+    // Sibilants / "s", "sh", "z" → ee/fv
+    if (ratio_hl > 0.9 && level > 0.15) {
+      return r < 0.6 ? 'ee' : 'fv';
+    }
+    // Heavy low → ah/oo
+    if (ratio_lm > 1.2 && level > 0.3) {
+      return r < 0.5 ? 'ah' : (r < 0.8 ? 'oo' : 'wr');
+    }
+    // Medium level → cycle through shapes
+    if (level > 0.5) {
+      // Loud — big shapes
+      var loud = ['ah', 'ee', 'oo', 'th', 'uh'];
+      return loud[Math.floor(r * loud.length)];
+    }
+    if (level > 0.25) {
+      var med = ['uh', 'ee', 'fv', 'wr', 'mbp', 'smirk'];
+      return med[Math.floor(r * med.length)];
+    }
+    // Quiet
+    var quiet = ['uh', 'mbp', 'rest', 'wr'];
+    return quiet[Math.floor(r * quiet.length)];
+  }
+
+  function applyViseme(v, level) {
+    var s = VISEMES[v];
+    if (!s) return;
+
+    // Mouth hole (dark interior)
+    els.mouthHole.setAttribute('rx', s.holeRx.toFixed(1));
+    els.mouthHole.setAttribute('ry', (s.holeRy * Math.max(level * 1.3, 0.3)).toFixed(1));
+    els.mouthHole.setAttribute('cy', s.holeCy.toFixed(1));
+
+    // Lips
+    els.lipUpper.setAttribute('d', s.upperLip);
+    els.lipLower.setAttribute('d', s.lowerLip);
+
+    // Jaw drop
+    var jawY = 80 + s.jawDy * Math.min(level * 1.5, 1);
+    els.jaw.setAttribute('cy', jawY.toFixed(1));
+
+    // Tongue
+    var tRy = s.tongueRy * Math.min(level * 1.5, 1);
+    els.tongue.setAttribute('ry', tRy.toFixed(1));
+    els.tongue.setAttribute('cy', s.tongueCy.toFixed(1));
+    els.tongue.setAttribute('rx', (3 + tRy * 0.5).toFixed(1));
+
+    // Teeth
+    var tuh = s.teethUpperH * Math.min(level * 1.8, 1);
+    var tlh = s.teethLowerH * Math.min(level * 1.5, 1);
+    els.teethUpper.setAttribute('height', tuh.toFixed(1));
+    els.teethUpper.setAttribute('y', (s.holeCy - s.holeRy * 0.6).toFixed(1));
+    els.teethUpper.setAttribute('x', (60 - s.holeRx * 0.45).toFixed(1));
+    els.teethUpper.setAttribute('width', (s.holeRx * 0.9).toFixed(1));
+    els.teethLower.setAttribute('height', tlh.toFixed(1));
+    els.teethLower.setAttribute('y', (s.holeCy + s.holeRy * 0.3).toFixed(1));
+    els.teethLower.setAttribute('x', (60 - s.holeRx * 0.4).toFixed(1));
+    els.teethLower.setAttribute('width', (s.holeRx * 0.8).toFixed(1));
+
+    // Cheek puff/squish
+    var cs = s.cheekScale;
+    els.cheekL.setAttribute('r', (5 * cs).toFixed(1));
+    els.cheekR.setAttribute('r', (5 * cs).toFixed(1));
+    var cheekOp = 0.25 + (cs > 1 ? 0.2 : 0);
+    els.cheekL.setAttribute('opacity', cheekOp.toFixed(2));
+    els.cheekR.setAttribute('opacity', cheekOp.toFixed(2));
+  }
 
   function animate() {
     analyser.getByteFrequencyData(analyserData);
     frameCount++;
 
-    // Get different frequency bands for variety
+    // Frequency bands
     var lowSum = 0, midSum = 0, highSum = 0;
-    for (var i = 2; i < 8; i++) lowSum += analyserData[i];    // low voice
-    for (var i = 8; i < 20; i++) midSum += analyserData[i];   // mid voice
-    for (var i = 20; i < 40; i++) highSum += analyserData[i]; // sibilants
+    for (var i = 2; i < 8; i++) lowSum += analyserData[i];
+    for (var i = 8; i < 22; i++) midSum += analyserData[i];
+    for (var i = 22; i < 45; i++) highSum += analyserData[i];
+    var lowAvg = lowSum / 6, midAvg = midSum / 14, highAvg = highSum / 23;
 
-    var lowAvg = lowSum / 6;
-    var midAvg = midSum / 12;
-    var highAvg = highSum / 20;
-    var rawLevel = Math.min((lowAvg * 0.4 + midAvg * 0.4 + highAvg * 0.2) / 130, 1);
-
-    // Smooth with some responsiveness
-    smoothLevel = smoothLevel * 0.5 + rawLevel * 0.5;
+    // Energy detection with fast attack, slow release
+    var rawLevel = Math.min((lowAvg * 0.35 + midAvg * 0.4 + highAvg * 0.25) / 120, 1);
+    if (rawLevel > smoothLevel) {
+      smoothLevel = smoothLevel * 0.3 + rawLevel * 0.7; // fast attack
+    } else {
+      smoothLevel = smoothLevel * 0.85 + rawLevel * 0.15; // slow release
+    }
+    smoothLow = smoothLow * 0.6 + lowAvg * 0.4;
+    smoothMid = smoothMid * 0.6 + midAvg * 0.4;
+    smoothHigh = smoothHigh * 0.6 + highAvg * 0.4;
     var level = smoothLevel;
 
-    // Determine mouth shape based on frequency content
-    shapeHoldFrames--;
-    if (shapeHoldFrames <= 0) {
-      if (level < 0.08) {
-        currentMouthShape = 0; // closed
-        shapeHoldFrames = 3;
-      } else if (highAvg > midAvg * 0.8 && level > 0.2) {
-        currentMouthShape = 2; // wide (like "ee" for sibilants)
-        shapeHoldFrames = 4 + Math.floor(Math.random() * 3);
-      } else if (lowAvg > midAvg && level > 0.3) {
-        currentMouthShape = 3; // O-shape (like "oh" for low sounds)
-        shapeHoldFrames = 5 + Math.floor(Math.random() * 3);
-      } else {
-        currentMouthShape = 1; // normal open
-        shapeHoldFrames = 2 + Math.floor(Math.random() * 2);
+    // Track silence for lip smack on restart
+    if (level < 0.06) {
+      silenceFrames++;
+      prevWasSilent = true;
+    } else {
+      if (prevWasSilent && silenceFrames > 8) {
+        // Coming out of silence → quick lip smack (mbp → chosen)
+        targetViseme = 'mbp';
+        visemeHoldFrames = 3;
       }
+      silenceFrames = 0;
+      prevWasSilent = false;
     }
 
-    var mouthRx, mouthRy, mouthCy, tongueRy, teethH;
-
-    switch (currentMouthShape) {
-      case 0: // closed
-        mouthRx = 6; mouthRy = 1.2; mouthCy = 78; tongueRy = 0; teethH = 0;
-        break;
-      case 1: // normal open (scales with level)
-        mouthRy = 2 + level * 7;
-        mouthRx = 7 + level * 3;
-        mouthCy = 78 + level * 2;
-        tongueRy = level > 0.5 ? level * 2.5 : 0;
-        teethH = level > 0.3 ? 2 + level * 2 : 0;
-        break;
-      case 2: // wide "ee" shape
-        mouthRx = 10 + level * 3;
-        mouthRy = 1.5 + level * 3;
-        mouthCy = 78;
-        tongueRy = 0;
-        teethH = level > 0.2 ? 2 : 0;
-        break;
-      case 3: // "O" shape
-        mouthRx = 5 + level * 2;
-        mouthRy = 4 + level * 6;
-        mouthCy = 79 + level * 1.5;
-        tongueRy = level > 0.4 ? level * 3 : 0;
-        teethH = 0;
-        break;
+    // Pick new viseme when hold expires
+    visemeHoldFrames--;
+    if (visemeHoldFrames <= 0) {
+      currentViseme = targetViseme;
+      targetViseme = pickViseme(level, smoothLow, smoothMid, smoothHigh);
+      visemeHoldFrames = 3 + Math.floor(Math.random() * 5);
+      visemeBlend = 0;
     }
 
-    mouth.setAttribute('rx', mouthRx.toFixed(1));
-    mouth.setAttribute('ry', mouthRy.toFixed(1));
-    mouth.setAttribute('cy', mouthCy.toFixed(1));
+    // Blend towards target
+    visemeBlend = Math.min(1, visemeBlend + 0.2);
 
-    if (tongue) {
-      tongue.setAttribute('ry', tongueRy.toFixed(1));
-      tongue.setAttribute('cy', (mouthCy + mouthRy * 0.5).toFixed(1));
-    }
-    if (teeth) {
-      teeth.setAttribute('height', teethH.toFixed(1));
-      teeth.setAttribute('y', (mouthCy - mouthRy * 0.6).toFixed(1));
-      teeth.setAttribute('x', (60 - mouthRx * 0.5).toFixed(1));
-      teeth.setAttribute('width', (mouthRx).toFixed(1));
-    }
+    // Apply the target viseme (blending handled by frame-rate smoothing)
+    applyViseme(targetViseme, level);
 
-    // Subtle head bob based on speech rhythm
-    if (head) {
-      var bob = Math.sin(frameCount * 0.08) * level * 1.5;
-      var tilt = Math.sin(frameCount * 0.03) * level * 0.8;
-      head.setAttribute('transform', 'translate(0,' + bob.toFixed(2) + ') rotate(' + tilt.toFixed(2) + ',60,60)');
+    // Head movement: bob + tilt + slight forward lean when loud
+    if (els.head) {
+      var bob = Math.sin(frameCount * 0.07) * level * 2;
+      var tilt = Math.sin(frameCount * 0.025) * (0.5 + level * 1.5);
+      var lean = level > 0.4 ? (level - 0.4) * 3 : 0;
+      els.head.setAttribute('transform',
+        'translate(0,' + (bob - lean * 0.5).toFixed(2) + ') rotate(' + tilt.toFixed(2) + ',60,60)');
     }
 
-    prevLevel = level;
     mouthAnimFrame = requestAnimationFrame(animate);
   }
   mouthAnimFrame = requestAnimationFrame(animate);
@@ -605,19 +725,25 @@ function stopMouthAnimation() {
   if (blinkTimer) { clearTimeout(blinkTimer); blinkTimer = null; }
   if (pupilTimer) { clearTimeout(pupilTimer); pupilTimer = null; }
   if (browTimer) { clearTimeout(browTimer); browTimer = null; }
+  if (squintTimer) { clearTimeout(squintTimer); squintTimer = null; }
   presenterBubble.classList.remove('speaking');
-  // Reset all face elements
-  document.querySelectorAll('.presenter-mouth').forEach(function(m) { m.setAttribute('ry', '1.5'); m.setAttribute('rx', '8'); m.setAttribute('cy', '78'); });
+  // Reset to rest viseme
+  var rest = VISEMES.rest;
+  document.querySelectorAll('.presenter-mouth-hole').forEach(function(m) { m.setAttribute('rx', '1'); m.setAttribute('ry', '0.5'); m.setAttribute('cy', '76'); });
+  document.querySelectorAll('.presenter-lip-upper').forEach(function(l) { l.setAttribute('d', rest.upperLip); });
+  document.querySelectorAll('.presenter-lip-lower').forEach(function(l) { l.setAttribute('d', rest.lowerLip); });
   document.querySelectorAll('.presenter-tongue').forEach(function(t) { t.setAttribute('ry', '0'); });
-  document.querySelectorAll('.presenter-teeth').forEach(function(t) { t.setAttribute('height', '0'); });
+  document.querySelectorAll('.presenter-teeth-upper, .presenter-teeth-lower').forEach(function(t) { t.setAttribute('height', '0'); });
+  document.querySelectorAll('.presenter-jaw').forEach(function(j) { j.setAttribute('cy', '80'); });
+  document.querySelectorAll('.presenter-cheek-l, .presenter-cheek-r').forEach(function(c) { c.setAttribute('r', '5'); c.setAttribute('opacity', '0.35'); });
   document.querySelectorAll('.presenter-lid-l, .presenter-lid-r').forEach(function(l) { l.setAttribute('ry', '0'); });
   document.querySelectorAll('.presenter-head').forEach(function(h) { h.setAttribute('transform', ''); });
   document.querySelectorAll('.presenter-brow-l').forEach(function(b) { b.setAttribute('y1', '46'); b.setAttribute('y2', '45'); });
   document.querySelectorAll('.presenter-brow-r').forEach(function(b) { b.setAttribute('y1', '45'); b.setAttribute('y2', '46'); });
-  document.querySelectorAll('.presenter-pupil-l').forEach(function(p) { p.setAttribute('cx', '49'); p.setAttribute('cy', '59'); });
-  document.querySelectorAll('.presenter-pupil-r').forEach(function(p) { p.setAttribute('cx', '75'); p.setAttribute('cy', '59'); });
-  document.querySelectorAll('.presenter-glint-l').forEach(function(g) { g.setAttribute('cx', '50'); g.setAttribute('cy', '57'); });
-  document.querySelectorAll('.presenter-glint-r').forEach(function(g) { g.setAttribute('cx', '76'); g.setAttribute('cy', '57'); });
+  document.querySelectorAll('.presenter-pupil-l').forEach(function(p) { p.setAttribute('cx', '49'); p.setAttribute('cy', '57'); });
+  document.querySelectorAll('.presenter-pupil-r').forEach(function(p) { p.setAttribute('cx', '75'); p.setAttribute('cy', '57'); });
+  document.querySelectorAll('.presenter-glint-l').forEach(function(g) { g.setAttribute('cx', '50.5'); g.setAttribute('cy', '55'); });
+  document.querySelectorAll('.presenter-glint-r').forEach(function(g) { g.setAttribute('cx', '76.5'); g.setAttribute('cy', '55'); });
 }
 
 // Hook into startAudio to drive the avatar

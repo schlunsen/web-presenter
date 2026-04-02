@@ -58,9 +58,11 @@
       <div class="presenter-avatar" id="presenter-avatar">
         <!-- Presenter A: slides 1-2 (warm tones, beanie) -->
         <svg class="presenter-svg presenter-a" id="presenter-a" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-          <!-- Head (with group for bobbing) -->
           <g class="presenter-head">
-            <ellipse cx="60" cy="62" rx="32" ry="36" fill="#fdd9b5"/>
+            <!-- Jaw (moves down when mouth opens wide) -->
+            <ellipse class="presenter-jaw" cx="60" cy="80" rx="24" ry="18" fill="#fdd9b5"/>
+            <!-- Head -->
+            <ellipse cx="60" cy="58" rx="32" ry="32" fill="#fdd9b5"/>
             <!-- Beanie -->
             <ellipse cx="60" cy="34" rx="34" ry="18" fill="#c4b5fd"/>
             <rect x="26" y="30" width="68" height="12" rx="2" fill="#a78bfa"/>
@@ -69,59 +71,71 @@
             <line class="presenter-brow-l" x1="39" y1="46" x2="55" y2="45" stroke="#8b6914" stroke-width="2.5" stroke-linecap="round"/>
             <line class="presenter-brow-r" x1="65" y1="45" x2="81" y2="46" stroke="#8b6914" stroke-width="2.5" stroke-linecap="round"/>
             <!-- Eyes -->
-            <ellipse cx="47" cy="58" rx="10" ry="11" fill="#fff"/>
-            <ellipse cx="73" cy="58" rx="10" ry="11" fill="#fff"/>
-            <circle class="presenter-pupil-l" cx="49" cy="59" r="4" fill="#222"/>
-            <circle class="presenter-pupil-r" cx="75" cy="59" r="4" fill="#222"/>
-            <circle class="presenter-glint-l" cx="50" cy="57" r="1.5" fill="#fff"/>
-            <circle class="presenter-glint-r" cx="76" cy="57" r="1.5" fill="#fff"/>
-            <!-- Eyelids (for blinking) -->
-            <ellipse class="presenter-lid-l" cx="47" cy="48" rx="11" ry="0" fill="#fdd9b5"/>
-            <ellipse class="presenter-lid-r" cx="73" cy="48" rx="11" ry="0" fill="#fdd9b5"/>
-            <!-- Mouth -->
-            <ellipse class="presenter-mouth" cx="60" cy="78" rx="8" ry="1.5" fill="#c0392b"/>
-            <!-- Tongue (hidden by default) -->
-            <ellipse class="presenter-tongue" cx="60" cy="82" rx="4" ry="0" fill="#e74c3c"/>
-            <!-- Teeth -->
-            <rect class="presenter-teeth" x="54" y="76" width="12" height="0" rx="1" fill="#fff" opacity="0.9"/>
-            <!-- Blush -->
-            <circle cx="38" cy="72" r="5" fill="#f0a6ca" opacity="0.4"/>
-            <circle cx="82" cy="72" r="5" fill="#f0a6ca" opacity="0.4"/>
+            <ellipse cx="47" cy="56" rx="10" ry="11" fill="#fff"/>
+            <ellipse cx="73" cy="56" rx="10" ry="11" fill="#fff"/>
+            <circle class="presenter-pupil-l" cx="49" cy="57" r="4.5" fill="#222"/>
+            <circle class="presenter-pupil-r" cx="75" cy="57" r="4.5" fill="#222"/>
+            <circle class="presenter-glint-l" cx="50.5" cy="55" r="1.8" fill="#fff"/>
+            <circle class="presenter-glint-r" cx="76.5" cy="55" r="1.8" fill="#fff"/>
+            <!-- Eyelids -->
+            <ellipse class="presenter-lid-l" cx="47" cy="46" rx="11" ry="0" fill="#fdd9b5"/>
+            <ellipse class="presenter-lid-r" cx="73" cy="46" rx="11" ry="0" fill="#fdd9b5"/>
+            <!-- Mouth area (dark interior) -->
+            <ellipse class="presenter-mouth-hole" cx="60" cy="76" rx="1" ry="0.5" fill="#2c1320"/>
+            <!-- Upper teeth -->
+            <rect class="presenter-teeth-upper" x="55" y="74" width="10" height="0" rx="1" fill="#fff" opacity="0.95"/>
+            <!-- Lower teeth -->
+            <rect class="presenter-teeth-lower" x="55" y="78" width="10" height="0" rx="1" fill="#eee" opacity="0.85"/>
+            <!-- Tongue -->
+            <ellipse class="presenter-tongue" cx="60" cy="80" rx="4" ry="0" fill="#d44"/>
+            <!-- Upper lip -->
+            <path class="presenter-lip-upper" d="M52,76 Q56,75 60,75 Q64,75 68,76" stroke="#c0392b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <!-- Lower lip -->
+            <path class="presenter-lip-lower" d="M52,76 Q56,77 60,77 Q64,77 68,76" stroke="#a93226" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Cheeks (squash on certain sounds) -->
+            <circle class="presenter-cheek-l" cx="36" cy="70" r="5" fill="#f0a6ca" opacity="0.35"/>
+            <circle class="presenter-cheek-r" cx="84" cy="70" r="5" fill="#f0a6ca" opacity="0.35"/>
           </g>
         </svg>
         <!-- Presenter B: slides 3-11 (cool tones, cap) -->
         <svg class="presenter-svg presenter-b" id="presenter-b" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="display:none">
           <g class="presenter-head">
-            <ellipse cx="60" cy="62" rx="32" ry="36" fill="#fdd9b5"/>
+            <!-- Jaw -->
+            <ellipse class="presenter-jaw" cx="60" cy="80" rx="24" ry="18" fill="#f5d0a9"/>
+            <!-- Head -->
+            <ellipse cx="60" cy="58" rx="32" ry="32" fill="#f5d0a9"/>
             <!-- Cap -->
-            <ellipse cx="60" cy="36" rx="35" ry="14" fill="#f0a6ca"/>
-            <rect x="25" y="32" width="70" height="10" rx="2" fill="#e0879b"/>
-            <rect x="28" y="28" width="64" height="8" rx="3" fill="#f0a6ca"/>
-            <rect x="65" y="22" width="28" height="10" rx="2" fill="#f0a6ca"/>
+            <ellipse cx="60" cy="34" rx="35" ry="14" fill="#f0a6ca"/>
+            <rect x="25" y="30" width="70" height="10" rx="2" fill="#e0879b"/>
+            <rect x="28" y="26" width="64" height="8" rx="3" fill="#f0a6ca"/>
+            <rect x="65" y="20" width="28" height="10" rx="2" fill="#f0a6ca"/>
             <!-- Eyebrows -->
-            <line class="presenter-brow-l" x1="39" y1="46" x2="55" y2="45" stroke="#8b6914" stroke-width="2.5" stroke-linecap="round"/>
-            <line class="presenter-brow-r" x1="65" y1="45" x2="81" y2="46" stroke="#8b6914" stroke-width="2.5" stroke-linecap="round"/>
+            <line class="presenter-brow-l" x1="39" y1="46" x2="55" y2="45" stroke="#6b4e14" stroke-width="2.5" stroke-linecap="round"/>
+            <line class="presenter-brow-r" x1="65" y1="45" x2="81" y2="46" stroke="#6b4e14" stroke-width="2.5" stroke-linecap="round"/>
             <!-- Eyes -->
-            <ellipse cx="47" cy="58" rx="10" ry="11" fill="#fff"/>
-            <ellipse cx="73" cy="58" rx="10" ry="11" fill="#fff"/>
-            <circle class="presenter-pupil-l" cx="49" cy="59" r="4" fill="#222"/>
-            <circle class="presenter-pupil-r" cx="75" cy="59" r="4" fill="#222"/>
-            <circle class="presenter-glint-l" cx="50" cy="57" r="1.5" fill="#fff"/>
-            <circle class="presenter-glint-r" cx="76" cy="57" r="1.5" fill="#fff"/>
+            <ellipse cx="47" cy="56" rx="10" ry="11" fill="#fff"/>
+            <ellipse cx="73" cy="56" rx="10" ry="11" fill="#fff"/>
+            <circle class="presenter-pupil-l" cx="49" cy="57" r="4.5" fill="#222"/>
+            <circle class="presenter-pupil-r" cx="75" cy="57" r="4.5" fill="#222"/>
+            <circle class="presenter-glint-l" cx="50.5" cy="55" r="1.8" fill="#fff"/>
+            <circle class="presenter-glint-r" cx="76.5" cy="55" r="1.8" fill="#fff"/>
             <!-- Eyelids -->
-            <ellipse class="presenter-lid-l" cx="47" cy="48" rx="11" ry="0" fill="#fdd9b5"/>
-            <ellipse class="presenter-lid-r" cx="73" cy="48" rx="11" ry="0" fill="#fdd9b5"/>
-            <!-- Glasses (on top of eyes) -->
-            <rect x="36" y="50" width="22" height="18" rx="3" fill="none" stroke="#555" stroke-width="2"/>
-            <rect x="62" y="50" width="22" height="18" rx="3" fill="none" stroke="#555" stroke-width="2"/>
-            <line x1="58" y1="58" x2="62" y2="58" stroke="#555" stroke-width="2"/>
-            <!-- Mouth -->
-            <ellipse class="presenter-mouth" cx="60" cy="78" rx="8" ry="1.5" fill="#c0392b"/>
-            <ellipse class="presenter-tongue" cx="60" cy="82" rx="4" ry="0" fill="#e74c3c"/>
-            <rect class="presenter-teeth" x="54" y="76" width="12" height="0" rx="1" fill="#fff" opacity="0.9"/>
-            <!-- Blush -->
-            <circle cx="38" cy="72" r="5" fill="#fbc4ab" opacity="0.4"/>
-            <circle cx="82" cy="72" r="5" fill="#fbc4ab" opacity="0.4"/>
+            <ellipse class="presenter-lid-l" cx="47" cy="46" rx="11" ry="0" fill="#f5d0a9"/>
+            <ellipse class="presenter-lid-r" cx="73" cy="46" rx="11" ry="0" fill="#f5d0a9"/>
+            <!-- Glasses -->
+            <rect x="36" y="48" width="22" height="18" rx="3" fill="none" stroke="#555" stroke-width="2"/>
+            <rect x="62" y="48" width="22" height="18" rx="3" fill="none" stroke="#555" stroke-width="2"/>
+            <line x1="58" y1="56" x2="62" y2="56" stroke="#555" stroke-width="2"/>
+            <!-- Mouth area -->
+            <ellipse class="presenter-mouth-hole" cx="60" cy="76" rx="1" ry="0.5" fill="#2c1320"/>
+            <rect class="presenter-teeth-upper" x="55" y="74" width="10" height="0" rx="1" fill="#fff" opacity="0.95"/>
+            <rect class="presenter-teeth-lower" x="55" y="78" width="10" height="0" rx="1" fill="#eee" opacity="0.85"/>
+            <ellipse class="presenter-tongue" cx="60" cy="80" rx="4" ry="0" fill="#d44"/>
+            <path class="presenter-lip-upper" d="M52,76 Q56,75 60,75 Q64,75 68,76" stroke="#c0392b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path class="presenter-lip-lower" d="M52,76 Q56,77 60,77 Q64,77 68,76" stroke="#a93226" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Cheeks -->
+            <circle class="presenter-cheek-l" cx="36" cy="70" r="5" fill="#fbc4ab" opacity="0.35"/>
+            <circle class="presenter-cheek-r" cx="84" cy="70" r="5" fill="#fbc4ab" opacity="0.35"/>
           </g>
         </svg>
       </div>
