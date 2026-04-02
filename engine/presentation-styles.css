@@ -387,11 +387,12 @@ body {
 }
 .presenter-svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
 .presenter-name {
-  font-size: 0.65rem; color: var(--text-muted); font-weight: 500;
-  background: rgba(26,21,32,0.85); backdrop-filter: blur(6px);
-  padding: 0.15rem 0.5rem; border-radius: 8px; border: 1px solid var(--border);
-  white-space: nowrap; margin-top: 0.2rem;
+  font-size: 0.75rem; color: var(--text); font-weight: 600; letter-spacing: 0.02em;
+  background: rgba(26,21,32,0.9); backdrop-filter: blur(8px);
+  padding: 0.25rem 0.75rem; border-radius: 10px; border: 1px solid var(--border);
+  white-space: nowrap; margin-top: 0.5rem;
   transition: opacity 0.3s ease;
+  text-align: center;
 }
 
 /* Swap burst effect */
@@ -458,6 +459,9 @@ body {
 .presenter-svg.enter-slide { animation: presenterEnterSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 .presenter-svg.enter-flip { animation: presenterEnterFlip 0.6s ease-out forwards; }
 .presenter-name.anim-in { animation: nameSlideIn 0.4s ease-out forwards; }
+.presenter-active-a .presenter-name { color: var(--lavender); border-color: rgba(196,181,253,0.25); }
+.presenter-active-b .presenter-name { color: var(--rose); border-color: rgba(240,166,202,0.25); }
+.presenter-active-c .presenter-name { color: var(--gold); border-color: rgba(242,204,143,0.25); }
 
 /* Ring color per presenter */
 .presenter-bubble.presenter-active-a .presenter-ring { box-shadow: 0 0 0 2px var(--lavender); }
