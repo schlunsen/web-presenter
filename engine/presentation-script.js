@@ -380,22 +380,98 @@ function getPresenter(slideIndex) {
   return 'b';
 }
 
+var currentPresenterWho = null;
+var swapBurst = document.getElementById('presenter-swap-burst');
+var EXIT_ANIMS = ['exit-spin', 'exit-drop', 'exit-zoom'];
+var ENTER_ANIMS = ['enter-bounce', 'enter-slide', 'enter-flip'];
+var ALL_ANIMS = EXIT_ANIMS.concat(ENTER_ANIMS);
+var PRESENTER_NAMES = { a: 'Alex', b: 'Sam', c: 'Valentina' };
+var presenterEls = { a: presenterA, b: presenterB, c: presenterC };
+var swapInProgress = false;
+
+function clearAnimClasses(el) {
+  ALL_ANIMS.forEach(function(c) { el.classList.remove(c); });
+}
+
+function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
 function showPresenter(slideIndex) {
   var who = getPresenter(slideIndex);
-  presenterA.style.display = 'none';
-  presenterB.style.display = 'none';
-  presenterC.style.display = 'none';
-  if (who === 'a') {
-    presenterA.style.display = '';
-    presenterName.textContent = 'Alex';
-  } else if (who === 'b') {
-    presenterB.style.display = '';
-    presenterName.textContent = 'Sam';
-  } else {
-    presenterC.style.display = '';
-    presenterName.textContent = 'Valentina';
+
+  // Same presenter, just make sure visible
+  if (who === currentPresenterWho) {
+    presenterBubble.classList.add('visible');
+    return;
   }
-  presenterBubble.classList.add('visible');
+
+  var prevWho = currentPresenterWho;
+  currentPresenterWho = who;
+
+  // First appearance — no swap animation needed
+  if (!prevWho || !presenterBubble.classList.contains('visible')) {
+    presenterA.style.display = 'none';
+    presenterB.style.display = 'none';
+    presenterC.style.display = 'none';
+    var newEl = presenterEls[who];
+    clearAnimClasses(newEl);
+    newEl.style.display = '';
+    newEl.classList.add(randomFrom(ENTER_ANIMS));
+    presenterName.textContent = PRESENTER_NAMES[who];
+    presenterName.classList.remove('anim-in');
+    void presenterName.offsetWidth;
+    presenterName.classList.add('anim-in');
+    presenterBubble.classList.remove('presenter-active-a', 'presenter-active-b', 'presenter-active-c');
+    presenterBubble.classList.add('presenter-active-' + who);
+    presenterBubble.classList.add('visible');
+    return;
+  }
+
+  // Swap animation: old exits → burst → new enters
+  if (swapInProgress) return;
+  swapInProgress = true;
+
+  var oldEl = presenterEls[prevWho];
+  var newEl = presenterEls[who];
+  var exitAnim = randomFrom(EXIT_ANIMS);
+  var enterAnim = randomFrom(ENTER_ANIMS);
+
+  // Phase 1: Old presenter exits
+  clearAnimClasses(oldEl);
+  void oldEl.offsetWidth;
+  oldEl.classList.add(exitAnim);
+
+  setTimeout(function() {
+    // Phase 2: Old is gone, fire burst glow
+    oldEl.style.display = 'none';
+    clearAnimClasses(oldEl);
+
+    swapBurst.classList.remove('fire');
+    void swapBurst.offsetWidth;
+    swapBurst.classList.add('fire');
+
+    // Update ring color
+    presenterBubble.classList.remove('presenter-active-a', 'presenter-active-b', 'presenter-active-c');
+    presenterBubble.classList.add('presenter-active-' + who);
+
+    setTimeout(function() {
+      // Phase 3: New presenter enters
+      newEl.style.display = '';
+      clearAnimClasses(newEl);
+      void newEl.offsetWidth;
+      newEl.classList.add(enterAnim);
+
+      // Name tag slides in
+      presenterName.textContent = PRESENTER_NAMES[who];
+      presenterName.classList.remove('anim-in');
+      void presenterName.offsetWidth;
+      presenterName.classList.add('anim-in');
+
+      setTimeout(function() {
+        swapInProgress = false;
+        swapBurst.classList.remove('fire');
+      }, 700);
+    }, 250); // slight delay after burst starts before new enters
+  }, 500); // wait for exit animation to finish
 }
 
 function hidePresenter() {
