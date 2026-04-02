@@ -310,8 +310,8 @@ bgMusic.loop = true;
 bgMusic.volume = 0;
 bgMusic.preload = 'auto';
 var bgMusicEnabled = true;
-var bgMusicBaseVolume = 0.15;  // quiet background level
-var bgMusicDuckedVolume = 0.06;  // duck when narration plays
+var bgMusicBaseVolume = 0.08;  // quiet background level
+var bgMusicDuckedVolume = 0.03;  // duck when narration plays
 var musicToggle = document.getElementById('music-toggle');
 
 function fadeBgMusic(to, dur) {
