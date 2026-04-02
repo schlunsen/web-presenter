@@ -367,24 +367,33 @@ document.addEventListener('keydown', function(e) { if (e.key === 'm' || e.key ==
 var presenterBubble = document.getElementById('presenter-bubble');
 var presenterA = document.getElementById('presenter-a');
 var presenterB = document.getElementById('presenter-b');
+var presenterC = document.getElementById('presenter-c');
 var presenterName = document.getElementById('presenter-name');
 var audioCtx = null, analyser = null, analyserData = null;
 var mouthAnimFrame = null;
 var connectedSources = new WeakMap();
 
-// Slide-to-presenter mapping: slides 1-2 = A, slides 3-11 = B
+// Slide-to-presenter mapping: slide 1 & 11 = C (Valentina), slide 2 = A (Alex), slides 3-10 = B (Sam)
 function getPresenter(slideIndex) {
-  return slideIndex < 2 ? 'a' : 'b';
+  if (slideIndex === 0 || slideIndex === 10) return 'c'; // slides 1 & 11
+  if (slideIndex < 2) return 'a';
+  return 'b';
 }
 
 function showPresenter(slideIndex) {
   var who = getPresenter(slideIndex);
+  presenterA.style.display = 'none';
+  presenterB.style.display = 'none';
+  presenterC.style.display = 'none';
   if (who === 'a') {
-    presenterA.style.display = ''; presenterB.style.display = 'none';
+    presenterA.style.display = '';
     presenterName.textContent = 'Alex';
-  } else {
-    presenterA.style.display = 'none'; presenterB.style.display = '';
+  } else if (who === 'b') {
+    presenterB.style.display = '';
     presenterName.textContent = 'Sam';
+  } else {
+    presenterC.style.display = '';
+    presenterName.textContent = 'Valentina';
   }
   presenterBubble.classList.add('visible');
 }
@@ -450,7 +459,7 @@ var VISEME_KEYS = Object.keys(VISEMES);
 function startMouthAnimation(slideIndex) {
   stopMouthAnimation();
   var who = getPresenter(slideIndex);
-  var svgEl = who === 'a' ? presenterA : presenterB;
+  var svgEl = who === 'a' ? presenterA : (who === 'b' ? presenterB : presenterC);
   var els = {
     mouthHole: svgEl.querySelector('.presenter-mouth-hole'),
     lipUpper: svgEl.querySelector('.presenter-lip-upper'),
