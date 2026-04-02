@@ -407,7 +407,36 @@ function showPresenter(slideIndex) {
   var prevWho = currentPresenterWho;
   currentPresenterWho = who;
 
-  // First appearance — no swap animation needed
+  var ringStroke = document.getElementById('presenter-ring-stroke');
+
+  function animateStrokeDraw(duration, cb) {
+    if (!ringStroke) { if (cb) cb(); return; }
+    var start = performance.now();
+    function step(now) {
+      var t = Math.min((now - start) / duration, 1);
+      // ease-out cubic
+      var e = 1 - Math.pow(1 - t, 3);
+      ringStroke.style.strokeDashoffset = (283 - e * 283).toFixed(0);
+      if (t < 1) requestAnimationFrame(step); else { if (cb) cb(); }
+    }
+    ringStroke.style.strokeDashoffset = '283';
+    requestAnimationFrame(step);
+  }
+
+  function animateStrokeErase(duration, cb) {
+    if (!ringStroke) { if (cb) cb(); return; }
+    var start = performance.now();
+    function step(now) {
+      var t = Math.min((now - start) / duration, 1);
+      var e = Math.pow(t, 2); // ease-in
+      ringStroke.style.strokeDashoffset = (e * 283).toFixed(0);
+      if (t < 1) requestAnimationFrame(step); else { if (cb) cb(); }
+    }
+    ringStroke.style.strokeDashoffset = '0';
+    requestAnimationFrame(step);
+  }
+
+  // First appearance — stroke draws in with enter animation
   if (!prevWho || !presenterBubble.classList.contains('visible')) {
     presenterA.style.display = 'none';
     presenterB.style.display = 'none';
@@ -423,10 +452,11 @@ function showPresenter(slideIndex) {
     presenterBubble.classList.remove('presenter-active-a', 'presenter-active-b', 'presenter-active-c');
     presenterBubble.classList.add('presenter-active-' + who);
     presenterBubble.classList.add('visible');
+    animateStrokeDraw(600);
     return;
   }
 
-  // Swap animation: old exits → burst → new enters
+  // Swap animation: stroke erases → old exits → burst → stroke draws → new enters
   if (swapInProgress) return;
   swapInProgress = true;
 
@@ -435,13 +465,14 @@ function showPresenter(slideIndex) {
   var exitAnim = randomFrom(EXIT_ANIMS);
   var enterAnim = randomFrom(ENTER_ANIMS);
 
-  // Phase 1: Old presenter exits
+  // Phase 0: Stroke erases while old exits
+  animateStrokeErase(400);
   clearAnimClasses(oldEl);
   void oldEl.offsetWidth;
   oldEl.classList.add(exitAnim);
 
   setTimeout(function() {
-    // Phase 2: Old is gone, fire burst glow
+    // Phase 1: Old is gone, fire burst glow
     oldEl.style.display = 'none';
     clearAnimClasses(oldEl);
 
@@ -454,11 +485,12 @@ function showPresenter(slideIndex) {
     presenterBubble.classList.add('presenter-active-' + who);
 
     setTimeout(function() {
-      // Phase 3: New presenter enters
+      // Phase 2: New presenter enters + stroke draws in
       newEl.style.display = '';
       clearAnimClasses(newEl);
       void newEl.offsetWidth;
       newEl.classList.add(enterAnim);
+      animateStrokeDraw(500);
 
       // Name tag slides in
       presenterName.textContent = PRESENTER_NAMES[who];
@@ -561,6 +593,7 @@ function startMouthAnimation(slideIndex) {
   presenterBubble.classList.add('speaking');
 
   var smoothLevel = 0, smoothLow = 0, smoothMid = 0, smoothHigh = 0;
+  var prevLevel = 0, rawLevel = 0;
   var frameCount = 0;
   var currentViseme = 'rest';
   var targetViseme = 'rest';
@@ -800,6 +833,26 @@ function startMouthAnimation(slideIndex) {
         'translate(0,' + (bob - lean * 0.5).toFixed(2) + ') rotate(' + tilt.toFixed(2) + ',60,60)');
     }
 
+    // Shockwave + ring pulse on audio spikes
+    var spike = rawLevel - prevLevel;
+    if (spike > 0.25 && frameCount > 10) {
+      var ring = document.getElementById('presenter-ring');
+      if (ring) {
+        ring.classList.remove('pulse');
+        void ring.offsetWidth;
+        ring.classList.add('pulse');
+        setTimeout(function() { ring.classList.remove('pulse'); }, 300);
+      }
+      var sw = document.getElementById('presenter-shockwave-' + (frameCount % 2 === 0 ? '1' : '2'));
+      if (sw) {
+        sw.classList.remove('fire');
+        void sw.offsetWidth;
+        sw.classList.add('fire');
+        setTimeout(function() { sw.classList.remove('fire'); }, 550);
+      }
+    }
+
+    prevLevel = rawLevel;
     mouthAnimFrame = requestAnimationFrame(animate);
   }
   mouthAnimFrame = requestAnimationFrame(animate);
@@ -812,6 +865,8 @@ function stopMouthAnimation() {
   if (browTimer) { clearTimeout(browTimer); browTimer = null; }
   if (squintTimer) { clearTimeout(squintTimer); squintTimer = null; }
   presenterBubble.classList.remove('speaking');
+  var ring = document.getElementById('presenter-ring');
+  if (ring) ring.classList.remove('pulse');
   // Reset to rest viseme
   var rest = VISEMES.rest;
   document.querySelectorAll('.presenter-mouth-hole').forEach(function(m) { m.setAttribute('rx', '1'); m.setAttribute('ry', '0.5'); m.setAttribute('cy', '76'); });
