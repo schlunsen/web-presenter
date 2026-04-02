@@ -362,6 +362,130 @@ musicToggle.addEventListener('click', function() {
 document.addEventListener('keydown', function(e) { if (e.key === 'm' || e.key === 'M') musicToggle.click(); });
 
 // ========================================
+// PRESENTER AVATAR (audio-reactive)
+// ========================================
+var presenterBubble = document.getElementById('presenter-bubble');
+var presenterA = document.getElementById('presenter-a');
+var presenterB = document.getElementById('presenter-b');
+var presenterName = document.getElementById('presenter-name');
+var audioCtx = null, analyser = null, analyserData = null;
+var mouthAnimFrame = null;
+var connectedSources = new WeakMap();
+
+// Slide-to-presenter mapping: slides 1-2 = A, slides 3-11 = B
+function getPresenter(slideIndex) {
+  return slideIndex < 2 ? 'a' : 'b';
+}
+
+function showPresenter(slideIndex) {
+  var who = getPresenter(slideIndex);
+  if (who === 'a') {
+    presenterA.style.display = ''; presenterB.style.display = 'none';
+    presenterName.textContent = 'Alex';
+  } else {
+    presenterA.style.display = 'none'; presenterB.style.display = '';
+    presenterName.textContent = 'Sam';
+  }
+  presenterBubble.classList.add('visible');
+}
+
+function hidePresenter() {
+  presenterBubble.classList.remove('visible', 'speaking');
+  stopMouthAnimation();
+}
+
+function ensureAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    analyser.smoothingTimeConstant = 0.6;
+    analyserData = new Uint8Array(analyser.frequencyBinCount);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function connectAudioToAnalyser(audio) {
+  ensureAudioContext();
+  if (!connectedSources.has(audio)) {
+    var source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    connectedSources.set(audio, source);
+  }
+}
+
+function startMouthAnimation(slideIndex) {
+  stopMouthAnimation();
+  var who = getPresenter(slideIndex);
+  var svgEl = who === 'a' ? presenterA : presenterB;
+  var mouth = svgEl.querySelector('.presenter-mouth');
+  if (!mouth) return;
+
+  presenterBubble.classList.add('speaking');
+
+  function animate() {
+    analyser.getByteFrequencyData(analyserData);
+    // Focus on voice frequencies (roughly bins 4-20 for speech fundamentals)
+    var sum = 0, count = 0;
+    for (var i = 3; i < 20; i++) { sum += analyserData[i]; count++; }
+    var avg = sum / count;
+    var level = Math.min(avg / 140, 1); // 0..1
+
+    // Animate mouth: scale ry (height) based on audio level
+    var minRy = 1.5, maxRy = 8;
+    var ry = minRy + level * (maxRy - minRy);
+    // Also shift cy slightly for open mouth effect
+    var cy = 78 + level * 2;
+    mouth.setAttribute('ry', ry.toFixed(1));
+    mouth.setAttribute('cy', cy.toFixed(1));
+    // Also slightly widen mouth when open
+    var rx = 8 + level * 3;
+    mouth.setAttribute('rx', rx.toFixed(1));
+
+    mouthAnimFrame = requestAnimationFrame(animate);
+  }
+  mouthAnimFrame = requestAnimationFrame(animate);
+}
+
+function stopMouthAnimation() {
+  if (mouthAnimFrame) { cancelAnimationFrame(mouthAnimFrame); mouthAnimFrame = null; }
+  presenterBubble.classList.remove('speaking');
+  // Reset mouths to closed
+  var mouths = document.querySelectorAll('.presenter-mouth');
+  mouths.forEach(function(m) { m.setAttribute('ry', '1.5'); m.setAttribute('rx', '8'); m.setAttribute('cy', '78'); });
+}
+
+// Hook into startAudio to drive the avatar
+var _origStartAudioForPresenter = startAudio;
+startAudio = function(audio, si, gen) {
+  showPresenter(si);
+  connectAudioToAnalyser(audio);
+  // Start mouth animation once audio is actually playing
+  var onPlay = function() {
+    if (gen === audioGeneration) startMouthAnimation(si);
+  };
+  audio.addEventListener('playing', onPlay, { once: true });
+  audio.addEventListener('ended', function() {
+    if (gen === audioGeneration) {
+      stopMouthAnimation();
+      // Hide after a delay (unless next slide starts)
+      setTimeout(function() {
+        if (gen === audioGeneration) hidePresenter();
+      }, 2000);
+    }
+  }, { once: true });
+  _origStartAudioForPresenter(audio, si, gen);
+};
+
+// Hide presenter when audio is toggled off
+var _origStopForPresenter = killAllAudio;
+killAllAudio = function() {
+  stopMouthAnimation();
+  _origStopForPresenter();
+};
+
+// ========================================
 // PLAY OVERLAY
 // ========================================
 var playOverlay = document.getElementById('play-overlay');
