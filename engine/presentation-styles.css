@@ -304,6 +304,9 @@ body {
 .audio-toggle.muted { color: var(--text-faint); }
 .audio-toggle.muted .audio-on { display: none; }
 .audio-toggle.muted .audio-off { display: block !important; }
+.music-toggle { color: var(--lavender); }
+.music-toggle:hover { color: var(--white); }
+.music-toggle.muted { color: var(--text-faint); }
 .volume-slider {
   width: 60px; height: 4px; -webkit-appearance: none; appearance: none;
   background: var(--border); border-radius: 2px; outline: none; cursor: pointer;

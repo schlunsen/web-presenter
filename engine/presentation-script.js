@@ -303,11 +303,70 @@ document.addEventListener('keydown', function(e) { if (e.key === 'a' || e.key ==
 window.__playSlideAudio = playSlideAudio;
 
 // ========================================
+// BACKGROUND MUSIC
+// ========================================
+var bgMusic = new Audio('presentation-audio/background-music.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0;
+bgMusic.preload = 'auto';
+var bgMusicEnabled = true;
+var bgMusicBaseVolume = 0.15;  // quiet background level
+var bgMusicDuckedVolume = 0.06;  // duck when narration plays
+var musicToggle = document.getElementById('music-toggle');
+
+function fadeBgMusic(to, dur) {
+  var from = bgMusic.volume, steps = 20, stepVal = (to - from) / steps, iv = dur / steps;
+  var t = setInterval(function() {
+    bgMusic.volume = Math.max(0, Math.min(1, bgMusic.volume + stepVal));
+    if ((stepVal > 0 && bgMusic.volume >= to - 0.005) || (stepVal < 0 && bgMusic.volume <= to + 0.005) || stepVal === 0) {
+      bgMusic.volume = Math.max(0, Math.min(1, to));
+      clearInterval(t);
+    }
+  }, iv);
+}
+
+function startBgMusic() {
+  if (!bgMusicEnabled) return;
+  bgMusic.volume = 0;
+  bgMusic.play().catch(function() {});
+  fadeBgMusic(bgMusicBaseVolume, 1500);
+}
+
+function duckBgMusic() {
+  if (!bgMusic.paused) fadeBgMusic(bgMusicDuckedVolume, 400);
+}
+
+function unduckBgMusic() {
+  if (!bgMusic.paused) fadeBgMusic(bgMusicBaseVolume, 800);
+}
+
+// Duck when narration plays, unduck when it ends
+var _origStartAudio = startAudio;
+startAudio = function(audio, si, gen) {
+  duckBgMusic();
+  audio.addEventListener('ended', function() { if (gen === audioGeneration) unduckBgMusic(); }, { once: true });
+  _origStartAudio(audio, si, gen);
+};
+
+musicToggle.addEventListener('click', function() {
+  bgMusicEnabled = !bgMusicEnabled;
+  musicToggle.classList.toggle('muted', !bgMusicEnabled);
+  if (!bgMusicEnabled) {
+    fadeBgMusic(0, 400);
+    setTimeout(function() { bgMusic.pause(); }, 500);
+  } else {
+    startBgMusic();
+  }
+});
+
+document.addEventListener('keydown', function(e) { if (e.key === 'm' || e.key === 'M') musicToggle.click(); });
+
+// ========================================
 // PLAY OVERLAY
 // ========================================
 var playOverlay = document.getElementById('play-overlay');
 var playOverlayBtn = document.getElementById('play-overlay-btn');
-function beginPresentation() { playOverlay.classList.add('hidden'); playSlideAudio(0); }
+function beginPresentation() { playOverlay.classList.add('hidden'); startBgMusic(); playSlideAudio(0); }
 
 (function() {
   var t = new Audio('presentation-audio/slide-01.mp3'); t.volume = 0;
