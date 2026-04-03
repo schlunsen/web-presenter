@@ -264,6 +264,8 @@ function startAudio(audio, si, gen) {
   audio.currentTime = 0;
   currentAudio = audio;
   audio.volume = 0;
+  // Speed up female presenter (Valentina, slides 1 & 12) by 5%
+  audio.playbackRate = (si === 0 || si === 11) ? 1.05 : 1.0;
   audio.play().catch(function() {});
   fadeAudio(audio, audioVolume, 600);
 
@@ -317,9 +319,14 @@ bgMusic.loop = true;
 bgMusic.volume = 0;
 bgMusic.preload = 'auto';
 var bgMusicEnabled = true;
-var bgMusicBaseVolume = 0.08;  // quiet background level
-var bgMusicDuckedVolume = 0.03;  // duck when narration plays
+var bgMusicVolumeMultiplier = 0.30;  // slider value (0-1) — scales the base/ducked volumes
+var bgMusicBaseVolume = 0.12;  // quiet background level (max)
+var bgMusicDuckedVolume = 0.05;  // duck when narration plays (max)
 var musicToggle = document.getElementById('music-toggle');
+var musicVolumeSlider = document.getElementById('music-volume-slider');
+
+function getMusicBase() { return bgMusicBaseVolume * bgMusicVolumeMultiplier; }
+function getMusicDucked() { return bgMusicDuckedVolume * bgMusicVolumeMultiplier; }
 
 function fadeBgMusic(to, dur) {
   var from = bgMusic.volume, steps = 20, stepVal = (to - from) / steps, iv = dur / steps;
@@ -336,15 +343,15 @@ function startBgMusic() {
   if (!bgMusicEnabled) return;
   bgMusic.volume = 0;
   bgMusic.play().catch(function() {});
-  fadeBgMusic(bgMusicBaseVolume, 1500);
+  fadeBgMusic(getMusicBase(), 1500);
 }
 
 function duckBgMusic() {
-  if (!bgMusic.paused) fadeBgMusic(bgMusicDuckedVolume, 400);
+  if (!bgMusic.paused) fadeBgMusic(getMusicDucked(), 400);
 }
 
 function unduckBgMusic() {
-  if (!bgMusic.paused) fadeBgMusic(bgMusicBaseVolume, 800);
+  if (!bgMusic.paused) fadeBgMusic(getMusicBase(), 800);
 }
 
 // Duck when narration plays, unduck when it ends
@@ -367,6 +374,15 @@ musicToggle.addEventListener('click', function() {
 });
 
 document.addEventListener('keydown', function(e) { if (e.key === 'm' || e.key === 'M') musicToggle.click(); });
+
+musicVolumeSlider.addEventListener('input', function() {
+  bgMusicVolumeMultiplier = parseInt(musicVolumeSlider.value) / 100;
+  if (!bgMusic.paused) {
+    // If narration is playing, stay ducked at new level; otherwise go to base
+    if (currentAudio && !currentAudio.paused) fadeBgMusic(getMusicDucked(), 200);
+    else fadeBgMusic(getMusicBase(), 200);
+  }
+});
 
 // ========================================
 // PRESENTER AVATAR (audio-reactive)

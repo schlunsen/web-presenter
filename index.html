@@ -21,34 +21,40 @@
 
     <!-- Audio Controls -->
     <div class="audio-controls" id="audio-controls">
-      <button class="audio-toggle" id="audio-toggle" aria-label="Toggle narration" title="Toggle narration (A)">
-        <svg class="audio-icon audio-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-        </svg>
-        <svg class="audio-icon audio-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          <line x1="23" y1="9" x2="17" y2="15" />
-          <line x1="17" y1="9" x2="23" y2="15" />
-        </svg>
-      </button>
-      <button class="audio-toggle music-toggle" id="music-toggle" aria-label="Toggle background music" title="Toggle music (M)">
-        <svg class="audio-icon audio-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18V5l12-2v13" />
-          <circle cx="6" cy="18" r="3" />
-          <circle cx="18" cy="16" r="3" />
-        </svg>
-        <svg class="audio-icon audio-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-          <path d="M9 18V5l12-2v13" opacity="0.4" />
-          <circle cx="6" cy="18" r="3" opacity="0.4" />
-          <circle cx="18" cy="16" r="3" opacity="0.4" />
-          <line x1="1" y1="1" x2="23" y2="23" />
-        </svg>
-      </button>
-      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60" aria-label="Volume" />
-      <div class="audio-progress" id="audio-progress">
-        <div class="audio-progress-bar" id="audio-progress-bar"></div>
+      <div class="audio-group audio-group--voice">
+        <button class="audio-toggle" id="audio-toggle" aria-label="Toggle narration" title="Toggle narration (A)">
+          <svg class="audio-icon audio-on" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+          <svg class="audio-icon audio-off" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <line x1="23" y1="9" x2="17" y2="15" />
+            <line x1="17" y1="9" x2="23" y2="15" />
+          </svg>
+        </button>
+        <input type="range" class="volume-slider volume-slider--voice" id="volume-slider" min="0" max="100" value="60" aria-label="Voice Volume" title="Voice volume" />
+        <div class="audio-progress" id="audio-progress">
+          <div class="audio-progress-bar" id="audio-progress-bar"></div>
+        </div>
+      </div>
+      <div class="audio-sep"></div>
+      <div class="audio-group audio-group--music">
+        <button class="audio-toggle music-toggle" id="music-toggle" aria-label="Toggle background music" title="Toggle music (M)">
+          <svg class="audio-icon audio-on" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13" />
+            <circle cx="6" cy="18" r="3" />
+            <circle cx="18" cy="16" r="3" />
+          </svg>
+          <svg class="audio-icon audio-off" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <path d="M9 18V5l12-2v13" opacity="0.4" />
+            <circle cx="6" cy="18" r="3" opacity="0.4" />
+            <circle cx="18" cy="16" r="3" opacity="0.4" />
+            <line x1="1" y1="1" x2="23" y2="23" />
+          </svg>
+        </button>
+        <input type="range" class="volume-slider volume-slider--music" id="music-volume-slider" min="0" max="100" value="30" aria-label="Music Volume" title="Music volume" />
       </div>
     </div>
 
