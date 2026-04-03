@@ -22,12 +22,26 @@ NARRATIONS = {
     7: "Built-in layouts give you bare flexibility, right? Choose from title, center, two-column, philosophy cards, dashboard grids, or create your own custom layouts with CSS grid and flexbox. The options is massive!",
     8: "Check this dashboard layout example! It showcases tables, statistics, and animated data! Everything is styled and transitions well smoothly into view! This is proper tech, innit!",
     9: "Under the hood yeah? It is pure HTML5, CSS3, and JavaScript! Three.js provides them WebGL backgrounds! Touch navigation works everywhere! Deploy to GitHub Pages with a single push! Zero dependencies! This is the future!",
-    10: "So what is you waiting for? Start presenting with proper style! Animated slides! Three.js backgrounds! Zero dependencies! Clone the repository and start creating beautiful presentations today! West side!",
-    11: "Did you know this yeah? Over eighty percent of audiences loses attention within the first ten minutes of a traditional slideshow! That is well bad! But Web Presenter changes all of that with immersive animations and interactive experiences! Respect!",
+    10: "Did you know this yeah? Over eighty percent of audiences loses attention within the first ten minutes of a traditional slideshow! That is well bad! But Web Presenter changes all of that with immersive animations and interactive experiences! Respect!",
+    11: "Aight so let me show you how to build your own presentation yeah? It is well simple! Step one, clone the repo and grab a HuggingFace token. Step two, point your favourite AI agent at the project and tell it what you want! The agent writes the slides, generates narration audio with Edge TTS, and creates images with HuggingFace FLUX! Step three, preview it locally and push to GitHub Pages! You can even use the browser-based Studio tools — the Creator and Editor — powered by LLMs! Wicked!",
+    12: "So what is you waiting for? Start presenting with proper style! Animated slides! Three.js backgrounds! Zero build tools! Clone the repository and let an AI agent build you something beautiful today! West side! Booyakasha!",
 }
 
-# Use the liveliest, most energetic voice
-VOICE = "en-US-GuyNeural"
+# Per-presenter voices (matches presenter mapping in presentation-script.js)
+# Valentina (slides 1 & 12), Alex (slides 2 & 11), Sam (slides 3-10)
+VOICES = {
+    "valentina": {"voice": "en-US-JennyNeural",  "rate": "+0%",   "pitch": "+0Hz"},   # Warm, friendly female — natural speed
+    "alex":      {"voice": "en-US-GuyNeural",     "rate": "-10%",  "pitch": "-8Hz"},   # Energetic male voice
+    "sam":       {"voice": "en-US-AndrewNeural",  "rate": "+0%",   "pitch": "+0Hz"},   # Confident male voice
+}
+
+def get_voice_for_slide(slide_num):
+    """Return the voice config dict for a given slide number (1-based)."""
+    if slide_num in (1, 12):
+        return VOICES["valentina"]
+    if slide_num in (2, 11):
+        return VOICES["alex"]
+    return VOICES["sam"]
 
 
 # ── Generate TTS audio via Edge TTS ──
@@ -35,10 +49,12 @@ async def generate_tts(slide_num, text):
     """Generate TTS using Microsoft Edge TTS (free, high quality)."""
     import edge_tts
 
-    print(f"  [TTS] Slide {slide_num:02d}: generating...")
+    vcfg = get_voice_for_slide(slide_num)
+    voice, rate, pitch = vcfg["voice"], vcfg["rate"], vcfg["pitch"]
+    print(f"  [TTS] Slide {slide_num:02d}: generating ({voice}, rate={rate}, pitch={pitch})...")
     outpath = os.path.join(AUDIO_DIR, f"slide-{slide_num:02d}.mp3")
     try:
-        communicate = edge_tts.Communicate(text, VOICE, rate="-15%", pitch="-12Hz")
+        communicate = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
         await communicate.save(outpath)
         size_kb = os.path.getsize(outpath) / 1024
         print(f"  [TTS] Slide {slide_num:02d}: OK ({size_kb:.0f} KB)")

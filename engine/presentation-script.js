@@ -155,6 +155,13 @@ function triggerSlideAnimations(index) {
       }, delay);
     });
   }
+  // Slide 11 (index 10): BUILD YOUR OWN — stagger build-step cards
+  if (index === 10) {
+    slide.querySelectorAll('.build-step').forEach(function(s) { s.classList.remove('visible'); });
+    slide.querySelectorAll('.build-step').forEach(function(s, i) {
+      setTimeout(function() { s.classList.add('visible'); }, 300 + i * 250);
+    });
+  }
 }
 triggerSlideAnimations(0);
 
@@ -373,10 +380,10 @@ var audioCtx = null, analyser = null, analyserData = null;
 var mouthAnimFrame = null;
 var connectedSources = new WeakMap();
 
-// Slide-to-presenter mapping: slide 1 & 11 = C (Valentina), slide 2 = A (Alex), slides 3-10 = B (Sam)
+// Slide-to-presenter mapping: slide 1 & 12 = C (Valentina), slides 2 & 11 = A (Alex), slides 3-10 = B (Sam)
 function getPresenter(slideIndex) {
-  if (slideIndex === 0 || slideIndex === 10) return 'c'; // slides 1 & 11
-  if (slideIndex < 2) return 'a';
+  if (slideIndex === 0 || slideIndex === 11) return 'c'; // slides 1 & 12
+  if (slideIndex === 1 || slideIndex === 10) return 'a'; // slides 2 & 11 (Alex)
   return 'b';
 }
 

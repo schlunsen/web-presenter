@@ -6,3 +6,9 @@
 .vscode/
 .env
 .env.*
+
+# Python virtualenv
+.venv/
+
+# Voice cloning reference samples
+voice-refs/

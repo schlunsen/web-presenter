@@ -155,6 +155,13 @@ function triggerSlideAnimations(index) {
       }, delay);
     });
   }
+  // Slide 11 (index 10): BUILD YOUR OWN — stagger build-step cards
+  if (index === 10) {
+    slide.querySelectorAll('.build-step').forEach(function(s) { s.classList.remove('visible'); });
+    slide.querySelectorAll('.build-step').forEach(function(s, i) {
+      setTimeout(function() { s.classList.add('visible'); }, 300 + i * 250);
+    });
+  }
 }
 triggerSlideAnimations(0);
 
