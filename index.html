@@ -320,30 +320,88 @@
 
     <!-- ============ SLIDE 3: The Problem ============ -->
     <section class="slide" data-index="2">
-      <div class="slide-content slide-two-col">
-        <div class="slide-text-side">
-          <h2 class="slide-heading">The Problem with Presentations</h2>
-          <blockquote class="slide-blockquote">
-            "Building engaging web presentations requires stitching together dozens of libraries, writing boilerplate, and fighting with build tools."
-          </blockquote>
-          <div class="problem-stats">
-            <div class="problem-stat">
-              <span class="stat-number">0</span>
-              <span class="stat-label">immersive experiences</span>
+      <div class="slide-content slide-center-layout">
+        <p class="slide-eyebrow problem-eyebrow">The Harsh Reality</p>
+        <h2 class="slide-heading slide-heading-big problem-heading">Presentations are<br/><span class="problem-word-broken">broken</span></h2>
+
+        <!-- Animated problem cards - stagger in one by one -->
+        <div class="problem-cards">
+          <div class="problem-card" data-problem="0">
+            <div class="problem-card-icon">
+              <svg viewBox="0 0 48 48" width="40" height="40" fill="none" stroke="var(--coral)" stroke-width="2">
+                <rect x="6" y="10" width="36" height="28" rx="4" opacity="0.5"/>
+                <path d="M14 22h20 M14 28h14 M14 34h8" stroke-linecap="round" opacity="0.3"/>
+                <line x1="8" y1="8" x2="40" y2="40" stroke-width="3" stroke-linecap="round"/>
+              </svg>
             </div>
-            <div class="problem-stat">
-              <span class="stat-number">Heavy</span>
-              <span class="stat-label">node_modules for simple slides</span>
+            <div class="problem-card-content">
+              <span class="problem-card-stat">0</span>
+              <span class="problem-card-label">immersive experiences</span>
+              <p class="problem-card-desc">Static slides. No animations. No life.</p>
             </div>
-            <div class="problem-stat">
-              <span class="stat-number">Flat</span>
-              <span class="stat-label">no animated backgrounds</span>
+          </div>
+
+          <div class="problem-card" data-problem="1">
+            <div class="problem-card-icon">
+              <svg viewBox="0 0 48 48" width="40" height="40" fill="none" stroke="var(--gold)" stroke-width="2">
+                <path d="M12 40V20l12-12 12 12v20" stroke-linejoin="round"/>
+                <rect x="18" y="28" width="12" height="12" rx="1"/>
+                <path d="M8 44h32" stroke-linecap="round" opacity="0.4"/>
+                <path d="M24 8 L24 4 M20 6h8" stroke-linecap="round" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="problem-card-content">
+              <span class="problem-card-stat">500<span class="problem-card-unit">MB</span></span>
+              <span class="problem-card-label">node_modules</span>
+              <p class="problem-card-desc">Heavy frameworks for simple slides.</p>
+            </div>
+          </div>
+
+          <div class="problem-card" data-problem="2">
+            <div class="problem-card-icon">
+              <svg viewBox="0 0 48 48" width="40" height="40" fill="none" stroke="var(--lavender)" stroke-width="2">
+                <circle cx="24" cy="24" r="16" opacity="0.4"/>
+                <path d="M18 24h12" stroke-linecap="round" stroke-width="3"/>
+                <circle cx="16" cy="16" r="2" fill="var(--lavender)" opacity="0.3"/>
+                <circle cx="32" cy="32" r="2" fill="var(--lavender)" opacity="0.3"/>
+              </svg>
+            </div>
+            <div class="problem-card-content">
+              <span class="problem-card-stat">Flat</span>
+              <span class="problem-card-label">no depth or motion</span>
+              <p class="problem-card-desc">Audiences tune out in minutes.</p>
             </div>
           </div>
         </div>
-        <div class="slide-visual-side">
-          <img src="presentation-images/slide-02-problem.svg" alt="Fragmented tools illustration" class="slide-illustration" />
+
+        <!-- Animated "boring slide" mockup that visually dies -->
+        <div class="problem-mockup">
+          <div class="mockup-titlebar">
+            <span class="mockup-dot mockup-dot-r"></span>
+            <span class="mockup-dot mockup-dot-y"></span>
+            <span class="mockup-dot mockup-dot-g"></span>
+            <span class="mockup-title">presentation.pptx</span>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-line mockup-line-title"></div>
+            <div class="mockup-line mockup-line-body"></div>
+            <div class="mockup-line mockup-line-body mockup-line-short"></div>
+            <div class="mockup-bullets">
+              <div class="mockup-line mockup-line-bullet"></div>
+              <div class="mockup-line mockup-line-bullet"></div>
+              <div class="mockup-line mockup-line-bullet"></div>
+            </div>
+          </div>
+          <div class="mockup-zzz">
+            <span class="zzz zzz-1">z</span>
+            <span class="zzz zzz-2">z</span>
+            <span class="zzz zzz-3">Z</span>
+          </div>
         </div>
+
+        <blockquote class="slide-blockquote problem-quote">
+          "83% of audiences lose focus in the first 10 minutes of a flat slideshow."
+        </blockquote>
       </div>
     </section>
 
@@ -456,8 +514,9 @@
       <div class="slide-content slide-center-layout">
         <!-- Title fades in LAST for narrative surprise -->
         <div class="zt-title">
-          <h2 class="slide-heading">How It Works</h2>
-          <p class="slide-body slide-body-subtitle">Three pillars. One seamless experience.</p>
+          <p class="slide-eyebrow">The Flow</p>
+          <h2 class="slide-heading slide-heading-big">How It Works</h2>
+          <p class="slide-body slide-body-subtitle">Three steps. Zero friction. One beautiful result.</p>
         </div>
 
         <div class="zt-track">
@@ -468,13 +527,24 @@
               <div class="zt-badge">1</div>
             </div>
             <div class="zt-card-body">
+              <div class="zt-card-icon">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="var(--rose)" stroke-width="1.5">
+                  <path d="M6 4h14l6 6v18H6V4z" stroke-linejoin="round"/>
+                  <path d="M20 4v6h6" stroke-linejoin="round" opacity="0.5"/>
+                  <path d="M10 16h12 M10 20h8 M10 24h10" stroke-linecap="round" opacity="0.4"/>
+                </svg>
+              </div>
               <h3>Author</h3>
-              <p>Write your slides in plain HTML. Each section is a slide with built-in layout classes.</p>
+              <p>Write slides in plain HTML with semantic sections and built-in layouts.</p>
+              <code class="zt-code">&lt;section class="slide"&gt;</code>
             </div>
           </div>
 
           <!-- Connector 1→2 -->
-          <div class="zt-connector"><div class="zt-connector-line"></div></div>
+          <div class="zt-connector">
+            <div class="zt-connector-line"></div>
+            <div class="zt-connector-pulse"></div>
+          </div>
 
           <!-- Card 2: Style -->
           <div class="zt-card" data-step="2">
@@ -483,13 +553,26 @@
               <div class="zt-badge">2</div>
             </div>
             <div class="zt-card-body">
+              <div class="zt-card-icon">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="var(--lavender)" stroke-width="1.5">
+                  <rect x="4" y="4" width="24" height="24" rx="4"/>
+                  <circle cx="16" cy="16" r="6" opacity="0.4"/>
+                  <path d="M4 12h24" opacity="0.2"/>
+                  <circle cx="10" cy="8" r="1.5" fill="var(--lavender)" opacity="0.5"/>
+                  <circle cx="16" cy="8" r="1.5" fill="var(--lavender)" opacity="0.3"/>
+                </svg>
+              </div>
               <h3>Style</h3>
-              <p>CSS variables control the entire theme. Dark mode, colors, typography — all customizable.</p>
+              <p>CSS variables control the entire theme — colors, fonts, layout. One file.</p>
+              <code class="zt-code">--rose: #f0a6ca;</code>
             </div>
           </div>
 
           <!-- Connector 2→3 -->
-          <div class="zt-connector"><div class="zt-connector-line"></div></div>
+          <div class="zt-connector">
+            <div class="zt-connector-line"></div>
+            <div class="zt-connector-pulse"></div>
+          </div>
 
           <!-- Card 3: Present -->
           <div class="zt-card" data-step="3">
@@ -498,8 +581,16 @@
               <div class="zt-badge">3</div>
             </div>
             <div class="zt-card-body">
+              <div class="zt-card-icon">
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="var(--sage)" stroke-width="1.5">
+                  <path d="M4 6h24v16H4V6z" stroke-linejoin="round"/>
+                  <path d="M12 28h8 M16 22v6" stroke-linecap="round"/>
+                  <polygon points="14,11 14,17 19,14" fill="var(--sage)" opacity="0.4" stroke="none"/>
+                </svg>
+              </div>
               <h3>Present</h3>
-              <p>Open in any browser. Navigate with keyboard, touch, or mouse. Deploy to GitHub Pages.</p>
+              <p>Open in any browser. Keyboard, touch, or click. Deploy to GitHub Pages.</p>
+              <code class="zt-code">git push origin main</code>
             </div>
           </div>
         </div>
@@ -539,20 +630,79 @@
 
     <!-- ============ SLIDE 7: Layouts ============ -->
     <section class="slide" data-index="6">
-      <div class="slide-content slide-two-col slide-two-col-reverse">
-        <div class="slide-visual-side">
-          <img src="presentation-images/slide-06-providers.svg" alt="Layout options illustration" class="slide-illustration" />
-        </div>
-        <div class="slide-text-side">
-          <h2 class="slide-heading">Built-in Layouts</h2>
-          <p class="slide-body">Choose from <strong>title</strong>, <strong>center</strong>, <strong>two-column</strong>, <strong>two-column-reverse</strong>, or create your own — all with CSS grid and flexbox.</p>
-          <div class="feature-pills">
-            <span class="feature-pill">Title Layout</span>
-            <span class="feature-pill">Center Layout</span>
-            <span class="feature-pill">Two-Column</span>
-            <span class="feature-pill">Philosophy Cards</span>
-            <span class="feature-pill">Dashboard Grid</span>
-            <span class="feature-pill">Custom Layouts</span>
+      <div class="slide-content slide-center-layout">
+        <p class="slide-eyebrow">Flexible Design</p>
+        <h2 class="slide-heading">Built-in Layouts</h2>
+        <p class="slide-body slide-body-subtitle">Pick a layout. Drop in content. Done.</p>
+
+        <!-- Animated layout grid previews -->
+        <div class="layout-grid">
+          <div class="layout-preview" data-layout="0">
+            <div class="layout-mini">
+              <div class="lm-bar lm-center" style="width:40%; height:8px; margin: 0 auto 4px;"></div>
+              <div class="lm-bar lm-center" style="width:60%; height:14px; margin: 0 auto 6px;"></div>
+              <div class="lm-bar lm-center" style="width:35%; height:6px; margin: 0 auto;"></div>
+            </div>
+            <span class="layout-label">Title</span>
+          </div>
+
+          <div class="layout-preview" data-layout="1">
+            <div class="layout-mini">
+              <div class="lm-bar" style="width:50%; height:10px; margin: 0 auto 6px;"></div>
+              <div class="lm-bar" style="width:70%; height:6px; margin: 0 auto 3px;"></div>
+              <div class="lm-bar" style="width:55%; height:6px; margin: 0 auto;"></div>
+            </div>
+            <span class="layout-label">Center</span>
+          </div>
+
+          <div class="layout-preview" data-layout="2">
+            <div class="layout-mini layout-mini-cols">
+              <div class="lm-col">
+                <div class="lm-bar" style="width:80%; height:8px;"></div>
+                <div class="lm-bar" style="width:100%; height:5px;"></div>
+                <div class="lm-bar" style="width:60%; height:5px;"></div>
+              </div>
+              <div class="lm-col">
+                <div class="lm-block"></div>
+              </div>
+            </div>
+            <span class="layout-label">Two-Column</span>
+          </div>
+
+          <div class="layout-preview" data-layout="3">
+            <div class="layout-mini">
+              <div class="lm-bar" style="width:45%; height:8px; margin: 0 auto 6px;"></div>
+              <div class="lm-card-row">
+                <div class="lm-minicard"></div>
+                <div class="lm-minicard"></div>
+                <div class="lm-minicard"></div>
+              </div>
+            </div>
+            <span class="layout-label">Cards</span>
+          </div>
+
+          <div class="layout-preview" data-layout="4">
+            <div class="layout-mini">
+              <div class="lm-topbar"></div>
+              <div class="lm-table">
+                <div class="lm-row"></div>
+                <div class="lm-row"></div>
+                <div class="lm-row"></div>
+              </div>
+            </div>
+            <span class="layout-label">Dashboard</span>
+          </div>
+
+          <div class="layout-preview" data-layout="5">
+            <div class="layout-mini layout-mini-custom">
+              <div class="lm-bar" style="width:30%; height:6px; position:absolute; top:8px; left:8px;"></div>
+              <div class="lm-block-sm" style="position:absolute; bottom:8px; right:8px;"></div>
+              <div class="lm-bar" style="width:40%; height:5px; position:absolute; bottom:12px; left:8px;"></div>
+              <svg viewBox="0 0 40 40" width="20" height="20" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.4;">
+                <path d="M20 5 L35 30 L5 30 Z" fill="none" stroke="var(--rose)" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span class="layout-label">Custom</span>
           </div>
         </div>
       </div>

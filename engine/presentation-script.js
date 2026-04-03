@@ -83,6 +83,27 @@ function animateCount(el, target, duration) {
 function triggerSlideAnimations(index) {
   var slide = slides[index];
   if (index === 1) slide.querySelectorAll('.philosophy-point').forEach(function(p, i) { setTimeout(function() { p.classList.add('visible'); }, 400 + i * 300); });
+
+  // Slide 3 (index 2): PROBLEM slide — dramatic staggered reveal
+  if (index === 2) {
+    var eyebrow = slide.querySelector('.problem-eyebrow');
+    var heading = slide.querySelector('.problem-heading');
+    var cards = slide.querySelectorAll('.problem-card');
+    var mockup = slide.querySelector('.problem-mockup');
+    var quote = slide.querySelector('.problem-quote');
+    [eyebrow, heading, mockup, quote].forEach(function(el) { if (el) el.classList.remove('visible'); });
+    cards.forEach(function(c) { c.classList.remove('visible'); });
+
+    // Choreography: eyebrow → heading → cards stagger → mockup → quote
+    setTimeout(function() { if (eyebrow) eyebrow.classList.add('visible'); }, 200);
+    setTimeout(function() { if (heading) heading.classList.add('visible'); }, 600);
+    cards.forEach(function(c, i) {
+      setTimeout(function() { c.classList.add('visible'); }, 1200 + i * 400);
+    });
+    setTimeout(function() { if (mockup) mockup.classList.add('visible'); }, 2800);
+    setTimeout(function() { if (quote) quote.classList.add('visible'); }, 3600);
+  }
+
   if (index === 3) {
     slide.classList.remove('phase-intro', 'phase-settled');
     slide.querySelectorAll('.agent-orbital').forEach(function(n) { n.classList.remove('visible'); });
@@ -137,7 +158,15 @@ function triggerSlideAnimations(index) {
     var r = slide.querySelector('.loop-repeat'); if (r) setTimeout(function() { r.classList.add('visible'); }, 1200);
     slide.querySelectorAll('.docker-container').forEach(function(c, i) { setTimeout(function() { c.classList.add('visible'); }, 400 + i * 150); });
   }
-  if (index === 6) slide.querySelectorAll('.timeline-event').forEach(function(e, i) { setTimeout(function() { e.classList.add('visible'); }, 300 + i * 200); });
+  // Slide 7 (index 6): LAYOUTS — stagger layout preview cards
+  if (index === 6) {
+    slide.querySelectorAll('.layout-preview').forEach(function(p) { p.classList.remove('visible'); });
+    slide.querySelectorAll('.layout-preview').forEach(function(p, i) {
+      setTimeout(function() { p.classList.add('visible'); }, 400 + i * 200);
+    });
+    // Legacy fallback
+    slide.querySelectorAll('.timeline-event').forEach(function(e, i) { setTimeout(function() { e.classList.add('visible'); }, 300 + i * 200); });
+  }
   if (index === 7) slide.querySelectorAll('.dash-row:not(.header)').forEach(function(r, i) { setTimeout(function() { r.classList.add('visible'); }, 300 + i * 200); });
   if (index === 8) slide.querySelectorAll('.severity-item').forEach(function(s, i) { setTimeout(function() { s.classList.add('visible'); }, 200 + i * 150); });
   // Slide 10 (index 9): IMPACT stagger + count + bars
