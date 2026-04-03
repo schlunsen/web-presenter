@@ -264,10 +264,11 @@ function startAudio(audio, si, gen) {
   audio.currentTime = 0;
   currentAudio = audio;
   audio.volume = 0;
-  // Speed up female presenter (Valentina, slides 1 & 12) by 5%
-  audio.playbackRate = (si === 0 || si === 11) ? 1.05 : 1.0;
+  // Valentina (slides 1 & 12): slightly faster, slightly quieter
+  var isValentina = (si === 0 || si === 11);
+  audio.playbackRate = isValentina ? 1.1 : 1.0;
   audio.play().catch(function() {});
-  fadeAudio(audio, audioVolume, 600);
+  fadeAudio(audio, isValentina ? audioVolume * 0.85 : audioVolume, 600);
 
   audioProgressInterval = setInterval(function() {
     if (gen !== audioGeneration) { clearInterval(audioProgressInterval); return; }
@@ -320,8 +321,8 @@ bgMusic.volume = 0;
 bgMusic.preload = 'auto';
 var bgMusicEnabled = true;
 var bgMusicVolumeMultiplier = 0.30;  // slider value (0-1) — scales the base/ducked volumes
-var bgMusicBaseVolume = 0.12;  // quiet background level (max)
-var bgMusicDuckedVolume = 0.05;  // duck when narration plays (max)
+var bgMusicBaseVolume = 0.18;  // quiet background level (max)
+var bgMusicDuckedVolume = 0.07;  // duck when narration plays (max)
 var musicToggle = document.getElementById('music-toggle');
 var musicVolumeSlider = document.getElementById('music-volume-slider');
 
